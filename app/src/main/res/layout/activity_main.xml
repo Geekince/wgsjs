@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    tools:context=".activity.MainActivity">
+
+    <com.wwsl.wgsj.custom.MyViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom"
+        app:canScroll="false" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/downloadLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:background="@drawable/shape_bg_grey_stroke_radius_10"
+            android:backgroundTint="#40000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <io.netopen.hotbitmapgg.library.view.RingProgressBar
+                android:id="@+id/loadPb"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerInParent="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:max="100"
+                app:ringColor="#40000000"
+                app:ringProgressColor="@color/orange_lite"
+                app:ringWidth="5dp"
+                app:style="STROKE"
+                app:textColor="@color/white"
+                app:textIsShow="true"
+                app:textSize="30sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/main_bottom_other_bg">
+
+        <com.wwsl.wgsj.custom.TabButtonGroup
+            android:id="@+id/tab_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.wwsl.wgsj.custom.TabButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:tbn_checked="true"
+                app:tbn_icon_size="0dp"
+                app:tbn_text_color_select="@color/white"
+                app:tbn_text_color_un_select="@color/home_tab_tv_color"
+                app:tbn_text_size="@dimen/sp_15"
+                app:tbn_tip="@string/main_home" />
+
+            <com.wwsl.wgsj.custom.TabButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:tbn_icon_size="0dp"
+                app:tbn_text_color_select="@color/white"
+                app:tbn_text_color_un_select="@color/home_tab_tv_color"
+                app:tbn_text_size="@dimen/sp_15"
+                app:tbn_tip="@string/main_list" />
+
+            <com.wwsl.wgsj.custom.TabButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:tbn_have_layout="false"
+                app:tbn_icon_size="43dp"
+                app:tbn_selected_icon="@mipmap/icon_main_camera_start"
+                app:tbn_unselected_icon="@mipmap/icon_main_camera_start" />
+
+            <com.wwsl.wgsj.custom.TabButton
+                android:id="@+id/tabMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:tbn_icon_size="0dp"
+                app:tbn_text_color_select="@color/white"
+                app:tbn_text_color_un_select="@color/home_tab_tv_color"
+                app:tbn_text_size="@dimen/sp_15"
+                app:tbn_tip="@string/main_msg" />
+
+            <com.wwsl.wgsj.custom.TabButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:tbn_icon_size="0dp"
+                app:tbn_text_color_select="@color/white"
+                app:tbn_text_color_un_select="@color/home_tab_tv_color"
+                app:tbn_text_size="@dimen/sp_15"
+                app:tbn_tip="@string/main_me" />
+        </com.wwsl.wgsj.custom.TabButtonGroup>
+
+        <!--<include layout="@layout/view_main_bottom" />-->
+    </FrameLayout>
+</RelativeLayout>

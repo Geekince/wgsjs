@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/msg_bg"
+    android:orientation="vertical"
+    tools:context=".activity.HuoYueActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingTop="30dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:onClick="backClick"
+            android:src="@mipmap/return_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.flyco.tablayout.SegmentTabLayout
+            android:id="@+id/tablayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.6"
+            app:tl_bar_color="@color/black_title"
+            app:tl_bar_stroke_color="@color/black_title"
+            app:tl_bar_stroke_width="0dp"
+            app:tl_divider_color="@color/black_title"
+            app:tl_indicator_color="@color/black_title"
+            app:tl_tab_padding="20dp"
+            app:tl_textSelectColor="@color/orange_lite"
+            app:tl_textUnselectColor="@color/white"
+            app:tl_textsize="15sp" />
+
+
+        <TextView
+            android:id="@+id/tvLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:onClick="jumpLevel"
+            android:text="@string/level"
+            android:textColor="#6A7285"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteY="11dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mdLayout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/shape_bg_border_20"
+        android:backgroundTint="#2C3241"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvLabel5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我的令牌:"
+                android:textColor="@color/gray3"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/num4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:maxWidth="120dp"
+                android:text="0.00"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/llayout2"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/tvLabel1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="预计收益"
+                android:textColor="@color/gray3"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/num1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lines="2"
+                android:maxWidth="120dp"
+                android:maxEms="8"
+                android:text="0.00"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/llayout1">
+
+            <TextView
+                android:id="@+id/tvLabel2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="今日所得"
+                android:textColor="@color/gray3"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/num2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lines="2"
+                android:maxWidth="120dp"
+                android:maxEms="8"
+                android:text="0.00"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/llayout2">
+
+            <TextView
+                android:id="@+id/tvLabel3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已冻结"
+                android:textColor="@color/gray3"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/num3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:lines="2"
+                android:maxWidth="120dp"
+                android:maxEms="8"
+                android:text="0.00"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/hyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/shape_bg_border_20"
+        android:backgroundTint="#2C3241"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/num5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:maxWidth="80dp"
+            android:textColor="#ffffffff"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toStartOf="@id/num6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvLabel11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            android:text="我的活跃度"
+            android:textColor="#6A7285"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/num5"
+            app:layout_constraintStart_toStartOf="@id/num5"
+            app:layout_constraintTop_toBottomOf="@id/num5" />
+
+
+        <TextView
+            android:id="@+id/num6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxWidth="80dp"
+            android:textColor="#ffffffff"
+            android:textSize="25sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/num7"
+            app:layout_constraintStart_toEndOf="@id/num5"
+            app:layout_constraintTop_toTopOf="@+id/num5"
+            app:layout_constraintVertical_bias="0.5" />
+        <!--基础活跃度-->
+        <TextView
+            android:id="@+id/tvLabel12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            android:text="基础活跃度"
+            android:textColor="#6A7285"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/num6"
+            app:layout_constraintStart_toStartOf="@id/num6"
+            app:layout_constraintTop_toBottomOf="@id/num6" />
+
+
+        <TextView
+            android:id="@+id/num7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxWidth="80dp"
+            android:textColor="#ffffffff"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/num6"
+            app:layout_constraintTop_toTopOf="@id/num6"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <TextView
+            android:id="@+id/tvLabel13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:text="活跃度加成"
+            android:textColor="#6A7285"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/num7"
+            app:layout_constraintStart_toStartOf="@id/num7"
+            app:layout_constraintTop_toBottomOf="@id/num7" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvLabel4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="我的活跃记录"
+        android:textColor="#fff95921"
+        android:textSize="18sp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recyclerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+
+        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_active" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

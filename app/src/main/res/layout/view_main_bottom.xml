@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/transparent"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/rb1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:checked="true"
+        android:gravity="center"
+        android:text="@string/main_home"
+        android:textColor="@color/sel_main_bottom_tv_color"
+        android:textSize="@dimen/sp_15" />
+
+    <RadioButton
+        android:id="@+id/rb2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:gravity="center"
+        android:text="@string/main_list"
+        android:textColor="@color/sel_main_bottom_tv_color"
+        android:textSize="@dimen/sp_15" />
+
+    <RadioButton
+        android:id="@+id/rb3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@mipmap/icon_main_camera_start"
+        android:button="@null"
+        android:gravity="center" />
+
+    <RadioButton
+        android:id="@+id/rb4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:gravity="center"
+        android:text="@string/main_msg"
+        android:textColor="@color/sel_main_bottom_tv_color"
+        android:textSize="@dimen/sp_15" />
+
+    <RadioButton
+        android:id="@+id/rb5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:gravity="center"
+        android:text="@string/main_me"
+        android:textColor="@color/sel_main_bottom_tv_color"
+        android:textSize="@dimen/sp_15" />
+</RadioGroup>

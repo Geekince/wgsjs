@@ -1,0 +1,2 @@
+rootProject.name='wgsj'
+include ':app', ':tiui', ':game', ':video', ':fire',':beauty'
