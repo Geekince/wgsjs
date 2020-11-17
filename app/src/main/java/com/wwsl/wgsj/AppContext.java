@@ -33,6 +33,7 @@ import com.wwsl.wgsj.utils.CrashHandler;
 import com.wwsl.wgsj.utils.L;
 import com.wwsl.wgsj.utils.SecurityUtil;
 import com.wwsl.wgsj.wxapi.ThirdConfig;
+import com.zj.zjsdk.ZjSdk;
 
 /**
  * @author :
@@ -85,6 +86,7 @@ public class AppContext extends MultiDexApplication {
 
     //异步初始化sdk
     private void asyncInitSDK() {
+        ZjSdk.init(this, "zj_11120200724027");
         LauncherStarter.init(this);
 
         LauncherStarter starter = LauncherStarter.createInstance();

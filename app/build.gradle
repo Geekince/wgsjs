@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+def replaceInManifest(manifestPath, fromString, toString) {
+    def manifestContent = file(manifestPath).getText('UTF-8')
+    manifestContent = manifestContent.replace(fromString, toString)
+    file(manifestPath).write(manifestContent, 'UTF-8')
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -48,11 +53,28 @@ android {
         }
 
         debug {
-            signingConfig signingConfigs.release
+            //开发 屏蔽签名
+//            signingConfig signingConfigs.release
             resValue "string", "app_name_live", "@string/app_name_debug"
 //            buildConfigField 'String', 'SERVER_URL', '"http://mdsj.wenzuxz.com"'
+            //http://test_zb.zjwgsj.com/
             buildConfigField 'String', 'SERVER_URL', '"http://wgsj.zjwgsj.com"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+
+
+        android.applicationVariants.all {
+            variant ->
+                variant.outputs.each {
+                    output ->
+                        output.processResources.doFirst {
+                            pm ->
+                                String manifestPath = output.processResources.manifestFile
+                                print(manifestPath)
+                                replaceInManifest(manifestPath, 'ZJ_AUTHORITY', variant.applicationId)
+                        }
+                }
         }
     }
 
@@ -156,9 +178,6 @@ dependencies {
     //腾讯短视频sdk
     api(name: 'LiteAVSDK_Professional_7.0.8670', ext: 'aar')
 
-    //飞马广告
-    api(name: 'app-admob-3.1.2', ext: 'aar')
-    api(name: 'msa_mdid_1.0.13', ext: 'aar')
 
     api(name: 'alipaySdk-15.7.7-20200702160044', ext: 'aar')
     //exoplayer

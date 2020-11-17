@@ -33,6 +33,9 @@ dependencies {
 
 
     api files('./libs/commons-io-1.4.jar')
+    api files('./libs/msa_mdid.aar')
+    api files('./libs/zj_kssdk.aar')
+    api files('./libs/zj_sdk_2.1.4.aar')
     //带圆角，边框的的ImageView
     api 'com.makeramen:roundedimageview:2.3.0'
     //eventbus事件总线
@@ -76,7 +79,7 @@ dependencies {
     api 'com.effective.android:panelSwitchHelper-androidx:1.3.1'
 
     api 'cn.hutool:hutool-core:5.3.7'
-    api 'com.tencent.tbs.tbssdk:sdk:43903'
+//    api 'com.tencent.tbs.tbssdk:sdk:43903'
     api 'com.scwang.smart:refresh-layout-horizontal:2.0.0'
     api 'com.scwang.smart:refresh-layout-kernel:2.0.1'
     api 'com.scwang.smart:refresh-header-classics:2.0.1'

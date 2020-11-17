@@ -68,7 +68,25 @@
             android:layout_height="match_parent"
             android:layout_marginStart="4dp"
             android:onClick="loginClick"
-            android:text="@string/login_privacy"
+            android:text="@string/protocol_content_temp4"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/btn_tip_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:text="@string/protocol_content_and"
+            android:textColor="@color/textColorA"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/btn_tip2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:onClick="loginClick"
+            android:text="@string/protocol_content_temp2"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </LinearLayout>

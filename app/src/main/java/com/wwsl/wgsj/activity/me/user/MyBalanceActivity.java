@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.frame.fire.util.LogUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.mob68.ad.RewardVideoAd;
 import com.wwsl.wgsj.AppConfig;
 import com.wwsl.wgsj.Constants;
 import com.wwsl.wgsj.R;
@@ -21,7 +20,6 @@ import com.wwsl.wgsj.glide.ImgLoader;
 import com.wwsl.wgsj.http.HttpCallback;
 import com.wwsl.wgsj.http.HttpConst;
 import com.wwsl.wgsj.http.HttpUtil;
-import com.wwsl.wgsj.utils.OutAdListener;
 import com.wwsl.wgsj.utils.ToastUtil;
 
 import java.util.List;
@@ -41,9 +39,6 @@ public class MyBalanceActivity extends BaseActivity implements View.OnClickListe
     private TextView tvDeposit;
     private RoundedImageView ivAd1;
     private RoundedImageView ivAd2;
-    private RewardVideoAd ad1;
-    private RewardVideoAd ad2;
-
 
     private String adUrl1;
     private String adUrl2;
@@ -101,8 +96,6 @@ public class MyBalanceActivity extends BaseActivity implements View.OnClickListe
             ivAd2.setVisibility(View.GONE);
         }
 
-        ad1 = new RewardVideoAd(MyBalanceActivity.this, "2582", "3737", "sMeFqicE", new OutAdListener("元宝[1]"));
-        ad2 = new RewardVideoAd(MyBalanceActivity.this, "2582", "3738", "sMeFqicE", new OutAdListener("元宝[2]"));
     }
 
     public static void forward(Context context) {
@@ -148,10 +141,10 @@ public class MyBalanceActivity extends BaseActivity implements View.OnClickListe
                 MoneyDetailActivity.forward(this, HttpConst.DETAIL_ACTION_ALL, HttpConst.DETAIL_ACTION_ALL);
                 break;
             case R.id.ivAd1:
-                adClickFir();
+                //adClickFir();
                 break;
             case R.id.ivAd2:
-                adClickSec();
+                //adClickSec();
                 break;
         }
     }
@@ -184,21 +177,5 @@ public class MyBalanceActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-    }
-
-    public void adClickFir() {
-        if (ad1.isReady()) {
-            ad1.showAd();
-        } else {
-            LogUtils.e(TAG, "adClickFir: 还未获取到广告，请在启动app时就授权，并提前初始化");
-        }
-    }
-
-    public void adClickSec() {
-        if (ad2.isReady()) {
-            ad2.showAd();
-        } else {
-            LogUtils.e(TAG, "adClickSec: 还未获取到广告，请在启动app时就授权，并提前初始化");
-        }
     }
 }

@@ -130,6 +130,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.btn_tip:
                 forwardTip();
                 break;
+            case R.id.btn_tip2:
+                WebViewActivity.forward(this, HtmlConfig.WEB_LINK_USER_PROTOCOL);
+                break;
             case R.id.changeMsgLogin:
                 changeUI(1);
                 break;

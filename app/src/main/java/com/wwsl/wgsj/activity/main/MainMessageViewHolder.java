@@ -4,17 +4,14 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.frame.fire.util.LogUtils;
-import com.mob68.ad.RewardVideoAd;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -35,10 +32,8 @@ import com.wwsl.wgsj.http.HttpCallback;
 import com.wwsl.wgsj.http.HttpUtil;
 import com.wwsl.wgsj.im.ImMessageUtil;
 import com.wwsl.wgsj.interfaces.CommonCallback;
-import com.wwsl.wgsj.utils.OutAdListener;
 import com.wwsl.wgsj.views.AbsMainViewHolder;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +54,7 @@ public class MainMessageViewHolder extends AbsMainViewHolder implements View.OnC
     private int recommendUserNum = 0;//用于刷新推荐用户
     private int mPage = 1;
     private int needRefreshData = 0;
-    private RewardVideoAd mRewardVideoAd;
+    //private RewardVideoAd mRewardVideoAd;
 
     public MainMessageViewHolder(Context context, ViewGroup parentView) {
         super(context, parentView);
@@ -139,21 +134,13 @@ public class MainMessageViewHolder extends AbsMainViewHolder implements View.OnC
                 } else if (msgShortBean.getType() == Constants.MESSAGE_TYPE_TEXT_RECOMMEND) {
                     UserHomePageActivity.forward(mContext, msgShortBean.getUid());
                 } else if (msgShortBean.getType() == Constants.MESSAGE_TYPE_AD) {
-                    if (mRewardVideoAd.isReady()) {
-                        mRewardVideoAd.showAd();
-                    } else {
-                        LogUtils.e(TAG, "mRewardVideoAd: 还未获取到广告，请在启动app时就授权，并提前初始化");
-                    }
 
-//                    if (!StrUtil.isEmpty(msgShortBean.getAdUrl())) {
-//                        WebViewActivity.forward(mContext, msgShortBean.getAdUrl());
-//                    }
                 }
             }
         });
 
         msgRecycler.setAdapter(msgShortAdapter);
-        mRewardVideoAd = new RewardVideoAd(mContext, "2582", "3736", "sMeFqicE", new OutAdListener("消息"));
+
     }
 
     private final static String TAG = "MainMessageViewHolder";
