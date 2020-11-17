@@ -42,6 +42,8 @@ import com.wwsl.wgsj.event.CommentDialogEvent;
 import com.wwsl.wgsj.event.DialogShowEvent;
 import com.wwsl.wgsj.event.FollowEvent;
 import com.wwsl.wgsj.event.PersonHomePageChangeEvent;
+import com.wwsl.wgsj.event.VideoCommentEvent;
+import com.wwsl.wgsj.event.VideoLikeEvent;
 import com.wwsl.wgsj.fragment.ShareDialog;
 import com.wwsl.wgsj.http.HttpCallback;
 import com.wwsl.wgsj.http.HttpConst;
@@ -82,7 +84,7 @@ import cn.hutool.core.util.StrUtil;
  * @description : 视频全屏播放页
  */
 public class VideoPlayListActivity extends BaseActivity implements View.OnClickListener, OnFaceClickListener,
-        OnDialogCallBackListener, SwipeRefreshLayout.OnRefreshListener, SwipeRecyclerView.LoadMoreListener {
+    OnDialogCallBackListener, SwipeRefreshLayout.OnRefreshListener, SwipeRecyclerView.LoadMoreListener {
 
     public int initPos;
 
@@ -100,7 +102,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
     private String mType = HttpConst.USER_VIDEO_TYPE_PRODUCT;
     private String uid;
     private int videoIndex = HttpConst.VIDEO_TYPE_PRODUCT << 10;
-
 
     private PreloadManager mPreloadManager;
 
@@ -126,8 +127,8 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         initPos = getIntent().getIntExtra("position", 0);
 
         if (HttpConst.USER_VIDEO_TYPE_PRODUCT.equals(mType)
-                || HttpConst.USER_VIDEO_TYPE_TREND.equals(mType)
-                || HttpConst.USER_VIDEO_TYPE_LIKE.equals(mType)) {
+            || HttpConst.USER_VIDEO_TYPE_TREND.equals(mType)
+            || HttpConst.USER_VIDEO_TYPE_LIKE.equals(mType)) {
             videoIndex = HttpConst.VIDEO_TYPE_PRODUCT << 10;
         }
 
@@ -137,7 +138,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         initView();
         initListener();
     }
-
 
     private void initListener() {
 
@@ -164,6 +164,7 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
                     //如果当前position 和 上一次固定后的position 相同, 说明是同一个, 只不过滑动了一点点, 然后又释放了
                     curVideoView = (VideoView) videoAdapter.getViewByPosition(position, R.id.videoView);
                     if (curVideoView != null) {
+                        LogUtils.e("startPlay: " + "position: " + position + "  url: " + mVideoList.get(position).getVideoUrl());
                         curVideoView.start();
                     }
                 }
@@ -195,9 +196,7 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
                 } else if (shareBean.getType() == Constants.DELETE_VIDEO) {
                     //删除视频
                     showLoadCancelable(true, "删除中...");
-                    String id = mVideoList.get(mCurPos).getId();
-                    LogUtils.e("videoDelete===", mCurPos + "----" + id);
-                    HttpUtil.videoDelete(id, new HttpCallback() {
+                    HttpUtil.videoDelete(mVideoList.get(mCurPos).getId(), new HttpCallback() {
                         @Override
                         public void onSuccess(int code, String msg, String[] info) {
                             dismissLoad();
@@ -223,120 +222,117 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
 
     private void saveVideo() {
         PermissionX.init(this)
-                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.READ_PHONE_STATE)
-                .request((allGranted, grantedList, deniedList) -> {
-                    if (allGranted) {
-                        VideoBean videoBean = videoAdapter.getData().get(mCurPos);
-                        showLoadCancelable(false, "保存视频中...");
-                        mDownloadUtil.download(videoBean.getId(), AppConfig.VIDEO_PATH, Calendar.getInstance().getTimeInMillis() + ".mp4", videoBean.getVideoUrl(), new DownloadUtil.Callback() {
-                            @Override
-                            public void onSuccess(File file) {
-                                dismissLoad();
-                                String path = "保存成功";
-                                if (file != null) {
-                                    String temp = file.getPath();
-                                    path = String.format("保存成功,位置:%s", temp);
-                                }
-
-                                FileUtil.saveVideo(VideoPlayListActivity.this, file);
-
-                                SnackBarUtil.ShortSnackbar(swipeRefreshLayout, path, SnackBarUtil.Info).show();
+            .permissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE)
+            .request((allGranted, grantedList, deniedList) -> {
+                if (allGranted) {
+                    VideoBean videoBean = videoAdapter.getData().get(mCurPos);
+                    showLoadCancelable(false, "保存视频中...");
+                    mDownloadUtil.download(videoBean.getId(), AppConfig.VIDEO_PATH, Calendar.getInstance().getTimeInMillis() + ".mp4", videoBean.getVideoUrl(), new DownloadUtil.Callback() {
+                        @Override
+                        public void onSuccess(File file) {
+                            dismissLoad();
+                            String path = "保存成功";
+                            if (file != null) {
+                                String temp = file.getPath();
+                                path = String.format("保存成功,位置:%s", temp);
                             }
 
-                            @Override
-                            public void onProgress(int progress) {
-                            }
+                            FileUtil.saveVideo(VideoPlayListActivity.this, file);
 
-                            @Override
-                            public void onError(Throwable e) {
-                                dismissLoad();
-                                SnackBarUtil.ShortSnackbar(swipeRefreshLayout, "下载失败", SnackBarUtil.Alert).show();
-                            }
-                        });
-                    }
-                });
+                            SnackBarUtil.ShortSnackbar(swipeRefreshLayout, path, SnackBarUtil.Info).show();
+                        }
+
+                        @Override
+                        public void onProgress(int progress) {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            dismissLoad();
+                            SnackBarUtil.ShortSnackbar(swipeRefreshLayout, "下载失败", SnackBarUtil.Alert).show();
+                        }
+                    });
+                }
+            });
     }
 
     @SuppressLint("DefaultLocale")
     private void initView() {
-        OnVideoLayoutClickListener onVideoLayoutClickListener = new OnVideoLayoutClickListener() {
-
-            @Override
-            public void onClickEvent(int type, VideoBean bean) {
-                switch (type) {
-                    case Constants.VIDEO_CLICK_HEAD:
-                        if (HttpConst.USER_VIDEO_TYPE_HOMETOWN.equals(mType)) {
-                            UserHomePageActivity.forward(VideoPlayListActivity.this, bean.getUid());
-                        } else if (HttpConst.USER_VIDEO_TYPE_LIKE.equals(mType)) {
-                            //从UserHomePageActivity 跳转
-                            UserHomePageActivity activity = (UserHomePageActivity) ActivityManager.getInstance().getActivity(UserHomePageActivity.class.getSimpleName());
-                            if (null != activity) {
-                                activity.updateUserInfo(bean.getUid());
-                                release();
-                            } else {
-                                EventBus.getDefault().post(PersonHomePageChangeEvent.builder().uid(bean.getUid()).build());
-                                release();
-                            }
+        OnVideoLayoutClickListener onVideoLayoutClickListener = (type, bean) -> {
+            switch (type) {
+                case Constants.VIDEO_CLICK_HEAD:
+                    if (HttpConst.USER_VIDEO_TYPE_HOMETOWN.equals(mType)) {
+                        UserHomePageActivity.forward(VideoPlayListActivity.this, bean.getUid());
+                    } else if (HttpConst.USER_VIDEO_TYPE_LIKE.equals(mType)) {
+                        //从UserHomePageActivity 跳转
+                        UserHomePageActivity activity = (UserHomePageActivity) ActivityManager.getInstance().getActivity(UserHomePageActivity.class.getSimpleName());
+                        if (null != activity) {
+                            activity.updateUserInfo(bean.getUid());
+                            release();
                         } else {
+                            EventBus.getDefault().post(PersonHomePageChangeEvent.builder().uid(bean.getUid()).build());
                             release();
                         }
-                        break;
-                    case Constants.VIDEO_CLICK_LIKE:
-                        HttpUtil.setVideoLike(String.format("%d%s", Constants.FOLLOW_FROM_VIDEO_LIKE, bean.getId()), bean.getId(), new HttpCallback() {
-                            @Override
-                            public void onSuccess(int code, String msg, String[] info) {
-                                if (code == 0 && info.length > 0) {
-                                    JSONObject obj = JSON.parseObject(info[0]);
-                                    String likeNum = obj.getString("likes");
-                                    int like = obj.getIntValue("islike");
-                                    videoAdapter.onlike(bean.getId(), likeNum, like);
-                                }
+                    } else {
+                        release();
+                    }
+                    break;
+                case Constants.VIDEO_CLICK_LIKE:
+                    HttpUtil.setVideoLike(String.format("%d%s", Constants.FOLLOW_FROM_VIDEO_LIKE, bean.getId()), bean.getId(), new HttpCallback() {
+                        @Override
+                        public void onSuccess(int code, String msg, String[] info) {
+                            if (code == 0 && info.length > 0) {
+                                JSONObject obj = JSON.parseObject(info[0]);
+                                String likeNum = obj.getString("likes");
+                                int like = obj.getIntValue("islike");
+                                videoAdapter.onlike(bean.getId(), likeNum, like);
+                                //更新首页点赞
+                                EventBus.getDefault().post(new VideoLikeEvent(bean.getId(), like, likeNum));
                             }
-                        });
-                        break;
-                    case Constants.VIDEO_CLICK_SHARE:
-                        shareDialog.updateAction(mVideoList.get(mCurPos).getUid());
-                        shareDialog.show(getSupportFragmentManager(), "VideoPlayListActivity");
-                        break;
-                    case Constants.VIDEO_CLICK_COMMENT:
-                        openCommentWindow(bean);
-                        break;
-                    case Constants.VIDEO_CLICK_FOLLOW:
-                        HttpUtil.setAttention(Constants.FOLLOW_FROM_VIDEO_PLAY, bean.getUid(), new CommonCallback<Integer>() {
-                            @Override
-                            public void callback(Integer bean) {
-//                        ToastUtil.show(bean == 1 ? "关注成功" : "取消关注成功");
-                            }
-                        });
-                        break;
-                    case Constants.VIDEO_CLICK_TITLE:
-                        break;
-                    case Constants.VIDEO_CLICK_MUSIC:
-                        if (null != bean.getMusicInfo()) {
-                            TakeVideoWithSameMusicActivity.forward(VideoPlayListActivity.this, bean.getMusicInfo());
-                        } else {
-                            ToastUtil.show("当前音乐不可编辑");
                         }
-                        break;
-                    case Constants.VIDEO_CLICK_AD:
-                        if (!StrUtil.isEmpty(bean.getAdUrl())) {
-                            WebViewActivity.forward2(VideoPlayListActivity.this, bean.getAdUrl());
+                    });
+                    break;
+                case Constants.VIDEO_CLICK_SHARE:
+                    shareDialog.updateAction(mVideoList.get(mCurPos).getUid());
+                    shareDialog.show(getSupportFragmentManager(), "VideoPlayListActivity");
+                    break;
+                case Constants.VIDEO_CLICK_COMMENT:
+                    openCommentWindow(bean);
+                    break;
+                case Constants.VIDEO_CLICK_FOLLOW:
+                    HttpUtil.setAttention(Constants.FOLLOW_FROM_VIDEO_PLAY, bean.getUid(), new CommonCallback<Integer>() {
+                        @Override
+                        public void callback(Integer bean) {
+                            //HttpUtil 里面已经发送事件
                         }
-                        break;
-                    case Constants.VIDEO_CLICK_GOODS:
-                        if (!StrUtil.isEmpty(bean.getGoodsId()) && bean.getGoods() != null && !StrUtil.isEmpty(bean.getGoods().getUrl())) {
-                            WebViewActivity.forward(VideoPlayListActivity.this, bean.getGoods().getUrl());
-                        }
-                        break;
-                    case Constants.VIDEO_CLICK_DS:
-                        openGiftDialog(bean.getId(), bean.getUid());
-                        break;
-                }
+                    });
+                    break;
+                case Constants.VIDEO_CLICK_TITLE:
+                    break;
+                case Constants.VIDEO_CLICK_MUSIC:
+                    if (null != bean.getMusicInfo()) {
+                        TakeVideoWithSameMusicActivity.forward(VideoPlayListActivity.this, bean.getMusicInfo());
+                    } else {
+                        ToastUtil.show("当前音乐不可编辑");
+                    }
+                    break;
+                case Constants.VIDEO_CLICK_AD:
+                    if (!StrUtil.isEmpty(bean.getAdUrl())) {
+                        WebViewActivity.forward2(VideoPlayListActivity.this, bean.getAdUrl());
+                    }
+                    break;
+                case Constants.VIDEO_CLICK_GOODS:
+                    if (!StrUtil.isEmpty(bean.getGoodsId()) && bean.getGoods() != null && !StrUtil.isEmpty(bean.getGoods().getUrl())) {
+                        WebViewActivity.forward(VideoPlayListActivity.this, bean.getGoods().getUrl());
+                    }
+                    break;
+                case Constants.VIDEO_CLICK_DS:
+                    openGiftDialog(bean.getId(), bean.getUid());
+                    break;
             }
-
         };
         layoutManager = new ViewPagerLayoutManager(this, OrientationHelper.VERTICAL);
         switch (mType) {
@@ -368,7 +364,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         videoRecycler = findViewById(R.id.videoRecycler);
     }
 
-
     @Override
     public void onBackPressed() {
         if (mVideoCommentViewHolder != null) {
@@ -379,7 +374,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         }
         super.onBackPressed();
     }
-
 
     @Override
     public void onResume() {
@@ -408,22 +402,19 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (curVideoView != null) {
             curVideoView.release();
         }
-//        mPreloadManager.removeAllPreloadTask();
+        //        mPreloadManager.removeAllPreloadTask();
         //清除缓存，实际使用可以不需要清除，这里为了方便测试
-//        ProxyVideoCacheManager.clearAllCache(this);
+        //        ProxyVideoCacheManager.clearAllCache(this);
         EventBus.getDefault().unregister(this);
     }
 
-
     private final static String TAG = "VideoPlayFragment";
-
 
     /**
      * 显示评论
@@ -456,7 +447,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         }
         return mFaceView;
     }
-
 
     /**
      * 打开评论输入框
@@ -550,7 +540,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         return v;
     }
 
-
     @Override
     public void onDialogViewClick(View view, Object object) {
         if (object instanceof CommentDialogEvent) {
@@ -565,8 +554,17 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
             KeyValueBean event = (KeyValueBean) object;
             switch (event.getKey()) {
                 case Constants.KEY_VIDEO_COMMENT_NUM:
+                    //刷新短视频评论数字
                     List<String> value = (List<String>) event.getValue();
                     videoAdapter.onComment(value.get(0), value.get(1));
+                    //刷新评论列表
+                    if (mVideoCommentViewHolder != null) {
+                        mVideoCommentViewHolder.updateData();
+                    }
+                    //刷新上一界面数据
+
+                    //刷新首页评论数量
+                    EventBus.getDefault().post(new VideoCommentEvent(value.get(0), value.get(1)));
                     break;
             }
         }
@@ -579,12 +577,10 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
         loadData();
     }
 
-
     @Override
     public void onLoadMore() {
         loadVideo(true);
     }
-
 
     public void loadData() {
         if (StrUtil.isEmpty(uid)) return;
@@ -630,7 +626,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
                         ToastUtil.show(msg);
                     }
 
-//                    videoRecycler.loadMoreFinish(false, true);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             });
@@ -677,6 +672,7 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
                         }
 
                         videoAdapter.addData(addBeans);
+
                         videoRecycler.loadMoreFinish(false, true);
                     } else {
                         videoRecycler.loadMoreFinish(true, false);
@@ -684,7 +680,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
                             ToastUtil.show(msg);
                         }
                     }
-//                    videoRecycler.loadMoreFinish(false, true);
                     swipeRefreshLayout.setRefreshing(false);
                 }
 
@@ -703,7 +698,6 @@ public class VideoPlayListActivity extends BaseActivity implements View.OnClickL
             videoAdapter.onFollowChanged(e.getToUid(), e.getIsAttention());
         }
     }
-
 
     public static void forward(Context conext, String uid, String type, int position) {
         Intent intent = new Intent(conext, VideoPlayListActivity.class);

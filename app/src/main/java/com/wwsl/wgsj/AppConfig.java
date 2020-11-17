@@ -122,7 +122,8 @@ public class AppConfig {
     private SparseArray<LevelBean> mAnchorLevelMap;
     private List<LiveGiftBean> mGiftList;
     private String todayPrice;//今日交易价格
-
+    //下载视频后拼接视频地址
+    public static final String joinPath = DCMI_PATH + "/logoVideo.mp4";
     private List<VideoTagBean> videoTags;//视频标签
     private List<VideoTypeBean> videoTypes;//视频分类
 

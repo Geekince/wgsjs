@@ -13,6 +13,11 @@ import android.provider.MediaStore;
 import androidx.loader.content.CursorLoader;
 
 import com.frame.fire.util.LogUtils;
+import com.wwsl.wgsj.AppConfig;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class FileUriHelper {
 
@@ -222,6 +227,43 @@ public class FileUriHelper {
     private boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
+
+    //把raw文件复制到本地
+    public void copyFilesFromRaw(Context context, int id) {
+        File file1 = new File(AppConfig.joinPath);
+        if (file1.exists()) return;
+
+        InputStream inputStream = context.getResources().openRawResource(id);
+        File file = new File(AppConfig.DCMI_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        readInputStream(inputStream);
+    }
+    private static void readInputStream(InputStream inputStream) {
+        File file = new File(AppConfig.joinPath);
+        try {
+            if (!file.exists()) {
+                // 1.建立通道对象
+                FileOutputStream fos = new FileOutputStream(file);
+                // 2.定义存储空间
+                byte[] buffer = new byte[inputStream.available()];
+                // 3.开始读文件
+                int lenght = 0;
+                while ((lenght = inputStream.read(buffer)) != -1) {// 循环从输入流读取buffer字节
+                    // 将Buffer中的数据写到outputStream对象中
+                    fos.write(buffer, 0, lenght);
+                }
+                fos.flush();// 刷新缓冲区
+                // 4.关闭流
+                fos.close();
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 

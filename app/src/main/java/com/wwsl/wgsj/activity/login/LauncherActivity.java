@@ -185,6 +185,7 @@ public class LauncherActivity extends AppCompatActivity {
       @Override
       public void onZjAdTickOver() {
         LogUtils.e("myth", "onZjAdTickOver");
+        goNext("");
       }
 
       //跳过
@@ -202,6 +203,8 @@ public class LauncherActivity extends AppCompatActivity {
       }
     }, "zjad_241111", 3);
   }
+
+  public boolean isShip = false;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,12 +1,14 @@
 package com.wwsl.wgsj.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.frame.fire.util.LogUtils;
@@ -15,53 +17,109 @@ import com.wwsl.wgsj.R;
 import com.wwsl.wgsj.bean.VideoBean;
 import com.wwsl.wgsj.http.HttpConst;
 import com.wwsl.wgsj.http.HttpUtil;
+import com.wwsl.wgsj.utils.CommonUtil;
 import com.wwsl.wgsj.utils.cache.PreloadManager;
 import com.wwsl.wgsj.utils.tiktok.OnVideoLayoutClickListener;
 import com.wwsl.wgsj.utils.tiktok.TikTokController;
 import com.wwsl.wgsj.utils.tiktok.TikTokRenderViewFactory;
 import com.wwsl.wgsj.views.TikTokView;
-
+import com.zj.zjsdk.ad.ZjAdError;
+import com.zj.zjsdk.ad.ZjSize;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideo;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoAd;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoListener;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class VideoAdapter extends BaseQuickAdapter<VideoBean, BaseViewHolder> {
+public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewHolder> {
 
     private final static String TAG = "VideoAdapter";
     private OnVideoLayoutClickListener listener;
     private TikTokRenderViewFactory tikTokRenderViewFactory;
-    private Context mContext;
     private int videoType;
-    private boolean hasPadding = false;
+    private Context  mContext;
+    private Activity mActivity;
 
     public VideoAdapter(@Nullable List<VideoBean> data, Context context, int videoType) {
-        super(R.layout.item_tik_tok, data);
-        tikTokRenderViewFactory = TikTokRenderViewFactory.create();
-        mContext = context;
+        super(data);
+        addItemType(3, R.layout.item_tik_tok);//正常视频
+        addItemType(1, R.layout.item_tik_tok);//助农
+        addItemType(2, R.layout.item_tik_tok);//广告
+        addItemType(99, R.layout.item_tik_tok_zj);//众简广告
+        this.mContext = context;
         this.videoType = videoType;
+        this.tikTokRenderViewFactory = TikTokRenderViewFactory.create();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return getData().get(position).getItemType();
+    }
+
+    public void setmActivity(Activity mActivity) {
+        this.mActivity = mActivity;
     }
 
     public void setLayoutClickListener(OnVideoLayoutClickListener listener) {
         this.listener = listener;
     }
 
-    public void setHasPadding(boolean hasPadding) {
-        this.hasPadding = hasPadding;
-    }
-
     @Override
     protected void convert(@NonNull BaseViewHolder helper, VideoBean item) {
-        TikTokView view = helper.getView(R.id.tiktok_View);
-        view.setVideoData(item, videoType);
-        view.setListener(listener);
-        VideoView mVideoView = helper.getView(R.id.videoView);
-        mVideoView.setRenderViewFactory(tikTokRenderViewFactory);
-        mVideoView.setLooping(true);
-        TikTokController mController = new TikTokController(mContext);
-        mVideoView.setVideoController(mController);
-        String playUrl = PreloadManager.getInstance(mContext).getPlayUrl(item.getVideoUrl());
-        mVideoView.setUrl(playUrl);
-        mController.addControlComponent(view, true);
+        switch (item.getItemType()) {
+            case 99:
+                LogUtils.e("myth", "加载广告...............");
+                FrameLayout container = helper.getView(R.id.container_ad);
+                DisplayMetrics dm = new DisplayMetrics();
+                mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+                int i = CommonUtil.px2dip(mContext, dm.heightPixels) - 10;
+
+                ZjExpressFeedFullVideo expressFullVideoFeed = new ZjExpressFeedFullVideo(
+                    mActivity, "zjad_241112",
+                    new ZjSize(dm.widthPixels, i),new ZjExpressFeedFullVideoListener(){
+                    @Override
+                    public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> list) {
+                        if (list == null || list.isEmpty()) return;
+                        for (ZjExpressFeedFullVideoAd ad : list) {
+                            ad.setCanInterruptVideoPlay(true);
+                            ad.setExpressInteractionListener(new ZjExpressFeedFullVideoAd.FeedFullVideoAdInteractionListener(){
+                                @Override public void onAdClicked(View view, int i) {
+                                }
+
+                                @Override public void onAdShow(View view, int i) {
+                                }
+                                @Override
+                                public void onRenderSuccess(View view, float v, float v1) {
+                                    container.removeAllViews();
+                                    container.addView(view);
+                                }
+                                @Override public void onRenderFail(View view, ZjAdError zjAdError) {
+                                }
+                            });
+                            ad.render();
+                        }
+                    }
+
+                    @Override public void onZjAdError(ZjAdError zjAdError) {
+
+                    }
+                });
+                expressFullVideoFeed.loadAd(3);
+                break;
+            default:
+                TikTokView view = helper.getView(R.id.tiktok_View);
+                VideoView mVideoView = helper.getView(R.id.videoView);
+                view.setVideoData(item, videoType);
+                view.setListener(listener);
+                mVideoView.setRenderViewFactory(tikTokRenderViewFactory);
+                mVideoView.setLooping(true);
+                TikTokController mController = new TikTokController(mContext);
+                mVideoView.setVideoController(mController);
+                String playUrl = PreloadManager.getInstance(mContext).getPlayUrl(item.getVideoUrl());
+                mVideoView.setUrl(playUrl);
+                mController.addControlComponent(view, true);
+                break;
+        }
     }
 
     @Override
@@ -72,6 +130,9 @@ public class VideoAdapter extends BaseQuickAdapter<VideoBean, BaseViewHolder> {
     @Override
     public void onViewDetachedFromWindow(@NonNull BaseViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
+
+        if (getItemViewType(holder.getLayoutPosition()) == 99) return;
+
         TikTokView view = holder.getView(R.id.tiktok_View);
         view.clear();
         VideoView mVideoView = holder.getView(R.id.videoView);
@@ -80,7 +141,6 @@ public class VideoAdapter extends BaseQuickAdapter<VideoBean, BaseViewHolder> {
             mVideoView.pause();
         }
     }
-
 
     @Override
     protected void convert(@NotNull BaseViewHolder holder, VideoBean item, @NotNull List<?> payloads) {
@@ -102,6 +162,9 @@ public class VideoAdapter extends BaseQuickAdapter<VideoBean, BaseViewHolder> {
     @SuppressLint("DefaultLocale")
     @Override
     public void onViewRecycled(@NonNull BaseViewHolder holder) {
+
+        if (getItemViewType(holder.getLayoutPosition()) == 99) return;
+
         int position = holder.getLayoutPosition();
         VideoView view = holder.getView(R.id.videoView);
         view.release();
@@ -110,50 +173,59 @@ public class VideoAdapter extends BaseQuickAdapter<VideoBean, BaseViewHolder> {
             PreloadManager.getInstance(mContext).removePreloadTask(getData().get(position).getVideoUrl());
             HttpUtil.cancel(String.format("%d%s", Constants.FOLLOW_FROM_VIDEO_LIKE, getData().get(position).getId()));
         }
-
         HttpUtil.cancel(HttpConst.SET_ATTENTION);
-
     }
-
-    public void onFollowChanged(String toUid, int isAttention) {
-        List<VideoBean> data = getData();
-        for (int i = 0; i < data.size(); i++) {
-            if (toUid.equals(data.get(i).getUid())) {
-                getData().get(i).setAttent(isAttention);
-                notifyItemChanged(i, PAYLOAD_FOLLOW);
-            }
-        }
-    }
-
 
     public static final int PAYLOAD_FOLLOW = 901;
     public static final int PAYLOAD_LIKE = 902;
     public static final int PAYLOAD_COMMENT = 903;
     public static final int PAYLOAD_SHARE = 904;
 
+    /**
+     * 关注状态更新
+     */
+    public void onFollowChanged(String toUid, int isAttention) {
+        for (VideoBean bean : getData()) {
+            if (toUid.equals(bean.getUid())) {
+                int index = getData().indexOf(bean);
+
+                bean.setAttent(isAttention);
+                notifyItemChanged(index, PAYLOAD_FOLLOW);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 喜欢状态更新
+     */
     public void onlike(String id, String likeNum, int like) {
-        List<VideoBean> data = getData();
-        for (int i = 0; i < data.size(); i++) {
-            if (id.equals(data.get(i).getId())) {
-                getData().get(i).setLikeNum(likeNum);
-                getData().get(i).setLike(like);
-                notifyItemChanged(i, PAYLOAD_LIKE);
+        for (VideoBean bean : getData()) {
+            if (id.equals(bean.getId())) {
+                int index = getData().indexOf(bean);
+
+                bean.setLike(like);
+                bean.setLikeNum(likeNum);
+                notifyItemChanged(index, PAYLOAD_LIKE);
                 break;
             }
         }
     }
 
+    /**
+     * 评论数量更新
+     */
     public void onComment(String id, String num) {
-        List<VideoBean> data = getData();
-        for (int i = 0; i < data.size(); i++) {
-            if (id.equals(data.get(i).getId())) {
-                getData().get(i).setCommentNum(num);
-                notifyItemChanged(i, PAYLOAD_COMMENT);
+        for (VideoBean bean : getData()) {
+            if (id.equals(bean.getId())) {
+                int index = getData().indexOf(bean);
+
+                bean.setCommentNum(num);
+                notifyItemChanged(index, PAYLOAD_COMMENT);
                 break;
             }
         }
     }
-
 
     public void onShare(String id, String num) {
         List<VideoBean> data = getData();
