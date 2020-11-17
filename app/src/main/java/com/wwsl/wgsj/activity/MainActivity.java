@@ -153,7 +153,7 @@ public class MainActivity extends AbsActivity {
         mViewHolders = new AbsMainViewHolder[4];
         setIconBadgeNumManager = new IconBadgeNumManager();
         mainHomeViewHolder = new MainHomeViewHolder(mContext, mViewPager, this);
-        mainGamesViewHolder = new MainGamesViewHolder(mContext, mViewPager);
+        mainGamesViewHolder = new MainGamesViewHolder(mContext, mViewPager,this);
         mainMessageViewHolder = new MainMessageViewHolder(mContext, mViewPager);
         mainMeViewHolder = new MainMeViewHolder(mContext, mViewPager, this);
 
