@@ -139,15 +139,11 @@ public class LauncherActivity extends AppCompatActivity {
       Manifest.permission.READ_PHONE_STATE
   };
 
-  private Handler handler = new Handler(msg -> {
+  private final Handler handler = new Handler(msg -> {
     switch (msg.what) {
       case 11:
-        showUI(2);
-        //videoIndex = 1;
-        //mVideoView.start();
+        initZJAd();
         isPlayEnd = true;
-        prepareFinish();
-        break;
       case 12:
         prepareFinish();
         break;
@@ -202,7 +198,7 @@ public class LauncherActivity extends AppCompatActivity {
             "onZjAdError(--)" + zjAdError.getErrorCode() + "-" + zjAdError.getErrorMsg());
         goNext("");
       }
-    }, "zjad_241111", 3);
+    }, Constants.AD_SPLASH_ID, 3);
   }
 
   public boolean isAdDismiss = false;
@@ -261,7 +257,7 @@ public class LauncherActivity extends AppCompatActivity {
     initVideoView();
     loadSpData();
 
-    initZJAd();
+
     //1.检查权限
     checkPermission();
 

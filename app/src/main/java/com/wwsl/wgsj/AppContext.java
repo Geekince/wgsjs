@@ -68,7 +68,7 @@ public class AppContext extends MultiDexApplication {
             Logger.addLogAdapter(new AndroidLogAdapter());
         }
 
-
+        ZjSdk.init(this, Constants.AD_APP_ID);
         //初始化Http
         HttpUtil.init();
         //全局配置视频解码器
@@ -86,7 +86,7 @@ public class AppContext extends MultiDexApplication {
 
     //异步初始化sdk
     private void asyncInitSDK() {
-        ZjSdk.init(this, "zj_11120200724027");
+
         LauncherStarter.init(this);
 
         LauncherStarter starter = LauncherStarter.createInstance();

@@ -30,7 +30,7 @@ public class RewardActivity extends BaseActivity implements ZjRewardVideoAdListe
   }
 
   @Override protected void init() {
-    rewardVideoAD = new ZjRewardVideoAd(this, "zjad_241110", this);
+    rewardVideoAD = new ZjRewardVideoAd(this, Constants.AD_VIDEO_REWARD_ID, this);
     rewardVideoAD.setUserId(AppConfig.getInstance().getUserBean().getId());
     loadAd();
   }

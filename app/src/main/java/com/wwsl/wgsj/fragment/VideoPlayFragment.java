@@ -2,7 +2,6 @@ package com.wwsl.wgsj.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
@@ -273,7 +271,7 @@ public class VideoPlayFragment extends BaseFragment
         if (mCurPos != position) {
           //如果当前position 和 上一次固定后的position 相同, 说明是同一个, 只不过滑动了一点点, 然后又释放了
           VideoBean videoBean = videoAdapter.getData().get(position);
-          if (videoBean.getItemType() != 99){
+          if (videoBean.getItemType() != 99) {
             curVideoView = (VideoView) videoAdapter.getViewByPosition(position, R.id.videoView);
             if (curVideoView != null) {
               LogUtils.e(
@@ -705,10 +703,8 @@ public class VideoPlayFragment extends BaseFragment
       for (int i = 0, j = startIndex; i < videoBeans.size(); i++) {
         mPreloadManager.addPreloadTask(videoBeans.get(i).getVideoUrl(), (videoStartIndex + j++));
       }
-      if (videoBeans.size() > 3) {
-        loadAd();
-      }
       videoAdapter.addData(videoBeans);
+      loadAd();
       if (videoAdapter.getData().size() > 0) {
         videoRecycler.scrollToPosition(0);
       }
@@ -718,39 +714,91 @@ public class VideoPlayFragment extends BaseFragment
     swipeRefreshLayout.finishRefresh(true);
   }
 
-  public void loadAd() {
+  public void loadMoreAd(int preSize, int newDataSize) {
     DisplayMetrics dm = new DisplayMetrics();
     getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
     ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
     ZjExpressFeedFullVideo expressFeedFullVideo =
-        new ZjExpressFeedFullVideo(getActivity(), "zjad_241112", size, new ZjExpressFeedFullVideoListener() {
+        new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
+            new ZjExpressFeedFullVideoListener() {
 
-          @Override
-          public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
-            LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
+              @Override
+              public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
+                LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
 
-            for (ZjExpressFeedFullVideoAd ksDrawAd : ads) {
-              if (ksDrawAd == null) {
-                continue;
+                int[] index = new int[3];
+                if (newDataSize >= 3) {
+                  int per = newDataSize / 3;
+                  index[0] = preSize + per;
+                  index[1] = preSize + per * 2 + 1;
+                  index[2] = preSize + newDataSize + 1;
+                  for (int i = 0; i < 3; i++) {
+                    ZjExpressFeedFullVideoAd ksDrawAd = ads.get(i);
+                    if (ksDrawAd == null) {
+                      continue;
+                    }
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ksDrawAd);
+                    videoAdapter.addData(index[i], bean);
+                  }
+                }
               }
 
-              VideoBean bean = new VideoBean();
-              bean.setId(System.currentTimeMillis() + "");
-              bean.setIsZn("0");
-              bean.setIsPublic("0");
-              bean.setIsAd("99");
-              bean.setAdItem(ksDrawAd);
-              videoAdapter.addData(bean);
-              break;
-            }
-          }
+              @Override
+              public void onZjAdError(ZjAdError error) {
+                LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
+              }
+            });
+    expressFeedFullVideo.loadAd(3);
+  }
 
-          @Override
-          public void onZjAdError(ZjAdError error) {
-            LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
-          }
-        });
-    expressFeedFullVideo.loadAd(1);
+  public void loadAd() {
+    int itemSize = videoAdapter.getData().size();
+    if (itemSize <= 0) return;
+    DisplayMetrics dm = new DisplayMetrics();
+    getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+    ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
+    ZjExpressFeedFullVideo expressFeedFullVideo =
+        new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
+            new ZjExpressFeedFullVideoListener() {
+
+              @Override
+              public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
+                LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
+
+                int itemSize = videoAdapter.getData().size();
+                int[] index = new int[3];
+                if (itemSize >= 3) {
+                  int per = itemSize / 3;
+                  index[0] = per;
+                  index[1] = per * 2 + 1;
+                  index[2] = itemSize + 1;
+                  for (int i = 0; i < 3; i++) {
+                    ZjExpressFeedFullVideoAd ksDrawAd = ads.get(i);
+                    if (ksDrawAd == null) {
+                      continue;
+                    }
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ksDrawAd);
+                    videoAdapter.addData(index[i], bean);
+                  }
+                }
+              }
+
+              @Override
+              public void onZjAdError(ZjAdError error) {
+                LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
+              }
+            });
+    expressFeedFullVideo.loadAd(3);
   }
 
   private void loadMoreData(boolean showLoadTxt) {
@@ -824,24 +872,40 @@ public class VideoPlayFragment extends BaseFragment
         mPreloadManager.addPreloadTask(newBeans.get(i).getVideoUrl(), (videoStartIndex + j++));
       }
       //加个众简广告
-      VideoBean bean = new VideoBean();
-      bean.setId(System.currentTimeMillis() + "");
-      bean.setIsZn("0");
-      bean.setIsPublic("0");
-      bean.setIsAd("99");
-      newBeans.add(bean);
+      loadMoreAd(videoAdapter.getData().size(), newBeans.size());
       videoAdapter.addData(newBeans);
-
       swipeRefreshLayout.finishLoadMore();
     } else {
       //加个众简广告
-      VideoBean bean = new VideoBean();
-      bean.setId(System.currentTimeMillis() + "");
-      bean.setIsZn("0");
-      bean.setIsPublic("0");
-      bean.setIsAd("99");
-      videoAdapter.getData().add(bean);
+      DisplayMetrics dm = new DisplayMetrics();
+      getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+      ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
+      ZjExpressFeedFullVideo expressFeedFullVideo =
+          new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
+              new ZjExpressFeedFullVideoListener() {
+                @Override
+                public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
+                  for (ZjExpressFeedFullVideoAd ksDrawAd : ads) {
+                    if (ksDrawAd == null) {
+                      continue;
+                    }
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ksDrawAd);
+                    videoAdapter.addData(bean);
+                    break;
+                  }
+                }
 
+                @Override
+                public void onZjAdError(ZjAdError error) {
+                  LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
+                }
+              });
+      expressFeedFullVideo.loadAd(1);
       swipeRefreshLayout.finishLoadMoreWithNoMoreData();
       if (showLoadTxt) {
         ToastUtil.show(msg);
