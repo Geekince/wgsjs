@@ -143,9 +143,10 @@ public class LauncherActivity extends AppCompatActivity {
     switch (msg.what) {
       case 11:
         showUI(2);
-        videoIndex = 1;
-        mVideoView.start();
-        initZJAd();
+        //videoIndex = 1;
+        //mVideoView.start();
+        isPlayEnd = true;
+        prepareFinish();
         break;
       case 12:
         prepareFinish();
@@ -260,8 +261,10 @@ public class LauncherActivity extends AppCompatActivity {
     initVideoView();
     loadSpData();
 
+    initZJAd();
     //1.检查权限
     checkPermission();
+
   }
 
   /**

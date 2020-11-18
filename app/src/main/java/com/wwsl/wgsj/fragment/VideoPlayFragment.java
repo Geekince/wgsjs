@@ -281,10 +281,6 @@ public class VideoPlayFragment extends BaseFragment
                       .getVideoUrl());
               curVideoView.start();
             }
-          }else {
-            if (videoBean.getAdItem() != null){
-              videoBean.getAdItem().onResume();
-            }
           }
         }
 

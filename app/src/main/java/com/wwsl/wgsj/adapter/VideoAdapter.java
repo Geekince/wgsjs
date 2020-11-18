@@ -61,53 +61,53 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
 
   @Override
   protected void convert(@NonNull BaseViewHolder helper, VideoBean item) {
-      if (item.getItemType() == 99) {
-          LogUtils.e("myth", "加载广告...............");
-          ZjExpressFeedFullVideoAd itemAd = item.getAdItem();
-          if (itemAd != null) {
-              itemAd.setCanInterruptVideoPlay(true);
-              itemAd.setExpressInteractionListener(
-                  new ZjExpressFeedFullVideoAd.FeedFullVideoAdInteractionListener() {
+    if (item.getItemType() == 99) {
+      LogUtils.e("myth", "加载广告...............");
+      ZjExpressFeedFullVideoAd itemAd = item.getAdItem();
+      FrameLayout container = helper.getView(R.id.container_ad);
+      if (itemAd != null) {
+        itemAd.setCanInterruptVideoPlay(false);
+        itemAd.setExpressInteractionListener(
+            new ZjExpressFeedFullVideoAd.FeedFullVideoAdInteractionListener() {
 
-                      @Override
-                      public void onAdClicked(View view, int type) {
-                        LogUtils.e("myth", "onAdClicked" );
-                      }
+              @Override
+              public void onAdClicked(View view, int type) {
+                LogUtils.e("myth", "onAdClicked");
+              }
 
-                      @Override
-                      public void onAdShow(View view, int type) {
-                        LogUtils.e("myth", "onAdShow" );
-                      }
+              @Override
+              public void onAdShow(View view, int type) {
+                LogUtils.e("myth", "onAdShow");
+              }
 
-                      @Override
-                      public void onRenderSuccess(View view, float width, float height) {
-                        LogUtils.e("myth", "onRenderSuccess" );
-                          FrameLayout container = helper.getView(R.id.container_ad);
-                          container.removeAllViews();
-                          container.addView(view);
-                      }
+              @Override
+              public void onRenderSuccess(View view, float width, float height) {
+                LogUtils.e("myth", "onRenderSuccess");
+                container.removeAllViews();
+                container.addView(view);
+              }
 
-                      @Override
-                      public void onRenderFail(View view, ZjAdError error) {
-                          LogUtils.e("myth",
-                              "ZjExpressFullVideoFeed2.error=" + error.getErrorMsg());
-                      }
-                  });
-              itemAd.render();
-          }
-      } else {
-          TikTokView view = helper.getView(R.id.tiktok_View);
-          VideoView mVideoView = helper.getView(R.id.videoView);
-          view.setVideoData(item, videoType);
-          view.setListener(listener);
-          mVideoView.setRenderViewFactory(tikTokRenderViewFactory);
-          mVideoView.setLooping(true);
-          TikTokController mController = new TikTokController(mContext);
-          mVideoView.setVideoController(mController);
-          String playUrl = PreloadManager.getInstance(mContext).getPlayUrl(item.getVideoUrl());
-          mVideoView.setUrl(playUrl);
-          mController.addControlComponent(view, true);
+              @Override
+              public void onRenderFail(View view, ZjAdError error) {
+                LogUtils.e("myth",
+                    "ZjExpressFullVideoFeed2.error=" + error.getErrorMsg());
+              }
+            });
+        itemAd.render();
       }
+    } else {
+      TikTokView view = helper.getView(R.id.tiktok_View);
+      VideoView mVideoView = helper.getView(R.id.videoView);
+      view.setVideoData(item, videoType);
+      view.setListener(listener);
+      mVideoView.setRenderViewFactory(tikTokRenderViewFactory);
+      mVideoView.setLooping(true);
+      TikTokController mController = new TikTokController(mContext);
+      mVideoView.setVideoController(mController);
+      String playUrl = PreloadManager.getInstance(mContext).getPlayUrl(item.getVideoUrl());
+      mVideoView.setUrl(playUrl);
+      mController.addControlComponent(view, true);
+    }
   }
 
   @Override
