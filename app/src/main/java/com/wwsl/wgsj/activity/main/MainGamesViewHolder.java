@@ -51,7 +51,7 @@ public class MainGamesViewHolder extends AbsMainViewHolder {
         List<View> views = new ArrayList<>(4);
         processingFragment = new ProcessingViewHolder(mContext, viewPager);
         viewList.add(processingFragment);
-        todayFragment = new TodayViewHolder(mContext, viewPager);
+        todayFragment = new TodayViewHolder(mContext, viewPager,mainActivity);
         viewList.add(todayFragment);
         mingWenTaskFragment = new MingWenTaskViewHolder(mContext, viewPager);
         viewList.add(mingWenTaskFragment);
@@ -68,5 +68,11 @@ public class MainGamesViewHolder extends AbsMainViewHolder {
         viewPager.setOffscreenPageLimit(4);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setViewPager(viewPager, titles);
+    }
+
+    public void adRewardBack(int times){
+        if (todayFragment!= null){
+            todayFragment.adRewardBack(times);
+        }
     }
 }

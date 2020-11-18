@@ -160,6 +160,11 @@ public class Constants {
     public static final String SOCKET_GAME_ZP = "startRotationGame";//幸运转盘
     public static final String SOCKET_GAME_EBB = "startShellGame";//二八贝
 
+
+
+    public static final String AD_TAG_JILI_FINISH_TIME = "jili_finish_time";//激励视频完成时间
+    public static final String AD_TAG_JILI_TIME = "jili_times";//激励视频完成次数
+
     public static final int SOCKET_WHAT_CONN = 0;
     public static final int SOCKET_WHAT_DISCONN = 2;
     public static final int SOCKET_WHAT_BROADCAST = 1;
@@ -226,6 +231,7 @@ public class Constants {
 
 
     public static final int REQUEST_CODE_SCAN = 0x00001001;//扫一扫
+    public static final int REQUEST_CODE_AD = 0x00001002;//扫一扫
 
     public static final String VIDEO_INPUT_DIALOG = "VideoInputDialogFragment";
     public static final String VIDEO_COMMENT_DIALOG = "VideoCommentViewHolder";

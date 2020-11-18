@@ -2,6 +2,8 @@
     <string name="app_name_release">围观视界</string>
     <string name="app_name_debug">围观视界</string>
 
+    <string name="view_ad_video">观看激励视频</string>
+    <string name="view_ad_video_times">(5/%s)</string>
     <string name="protocol_title">用户协议与隐私政策</string>
     <string name="can_not_done">暂不接受</string>
     <string name="agree">同意</string>

@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,7 +38,6 @@ import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.controller.IControlComponent;
 import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoView;
-import com.dueeeke.videoplayer.util.L;
 import com.frame.fire.util.LogUtils;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
@@ -54,7 +52,6 @@ import com.wwsl.wgsj.activity.MainActivity;
 import com.wwsl.wgsj.activity.common.WebViewActivity;
 import com.wwsl.wgsj.bean.ConfigBean;
 import com.wwsl.wgsj.bean.LaunchAdBean;
-import com.wwsl.wgsj.bean.MobileBean;
 import com.wwsl.wgsj.bean.PartnerCityBean;
 import com.wwsl.wgsj.bean.UserBean;
 import com.wwsl.wgsj.custom.AdvertSkipView;
@@ -185,12 +182,15 @@ public class LauncherActivity extends AppCompatActivity {
       @Override
       public void onZjAdTickOver() {
         LogUtils.e("myth", "onZjAdTickOver");
-        goNext("");
+        if (!isAdDismiss){
+          goNext("");
+        }
       }
 
       //跳过
       @Override
       public void onZjAdDismissed() {
+        isAdDismiss = true;
         LogUtils.e("myth", "onZjAdDismissed");
         goNext("");
       }
@@ -204,7 +204,7 @@ public class LauncherActivity extends AppCompatActivity {
     }, "zjad_241111", 3);
   }
 
-  public boolean isShip = false;
+  public boolean isAdDismiss = false;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

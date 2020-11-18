@@ -421,7 +421,10 @@
             android:name=".activity.login.AccountInvalidActivity"
             android:launchMode="singleTop"
             android:theme="@style/dialog2" />
-        <!-- 友盟统计 -->
+      <activity android:name=".activity.main.RewardActivity"
+          android:theme="@style/Transparent"
+          />
+      <!-- 友盟统计 -->
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5f042d1f978eea07806115a1" />

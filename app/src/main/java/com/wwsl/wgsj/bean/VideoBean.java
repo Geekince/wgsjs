@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.wwsl.wgsj.bean.net.VideoMusicBean;
 
 import androidx.annotation.Nullable;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoAd;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -119,6 +120,9 @@ public class VideoBean implements Parcelable, MultiItemEntity {
 
     @JSONField(name = "watch_ok")
     private String viewOkNum;//视频播放完 观看数
+
+
+    private ZjExpressFeedFullVideoAd adItem;
 
 
     @Override

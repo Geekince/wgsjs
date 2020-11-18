@@ -2,6 +2,7 @@ package com.wwsl.wgsj.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
@@ -61,6 +64,7 @@ import com.wwsl.wgsj.interfaces.CommonCallback;
 import com.wwsl.wgsj.interfaces.IMainVideoPlayer;
 import com.wwsl.wgsj.interfaces.OnFaceClickListener;
 import com.wwsl.wgsj.share.ShareHelper;
+import com.wwsl.wgsj.utils.CommonUtil;
 import com.wwsl.wgsj.utils.DownloadUtil;
 import com.wwsl.wgsj.utils.FileUriHelper;
 import com.wwsl.wgsj.utils.FileUtil;
@@ -77,6 +81,11 @@ import com.wwsl.wgsj.views.viewpagerlayoutmanager.OnViewPagerListener;
 import com.wwsl.wgsj.views.viewpagerlayoutmanager.ViewPagerLayoutManager;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 
+import com.zj.zjsdk.ad.ZjAdError;
+import com.zj.zjsdk.ad.ZjSize;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideo;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoAd;
+import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -263,12 +272,19 @@ public class VideoPlayFragment extends BaseFragment
       public void onPageSelected(int position, boolean isBottom) {
         if (mCurPos != position) {
           //如果当前position 和 上一次固定后的position 相同, 说明是同一个, 只不过滑动了一点点, 然后又释放了
-          curVideoView = (VideoView) videoAdapter.getViewByPosition(position, R.id.videoView);
-          if (curVideoView != null) {
-            LogUtils.e(
-                "startPlay: " + "position: " + position + "  url: " + mVideoList.get(position)
-                    .getVideoUrl());
-            curVideoView.start();
+          VideoBean videoBean = videoAdapter.getData().get(position);
+          if (videoBean.getItemType() != 99){
+            curVideoView = (VideoView) videoAdapter.getViewByPosition(position, R.id.videoView);
+            if (curVideoView != null) {
+              LogUtils.e(
+                  "startPlay: " + "position: " + position + "  url: " + mVideoList.get(position)
+                      .getVideoUrl());
+              curVideoView.start();
+            }
+          }else {
+            if (videoBean.getAdItem() != null){
+              videoBean.getAdItem().onResume();
+            }
           }
         }
 
@@ -694,12 +710,7 @@ public class VideoPlayFragment extends BaseFragment
         mPreloadManager.addPreloadTask(videoBeans.get(i).getVideoUrl(), (videoStartIndex + j++));
       }
       if (videoBeans.size() > 3) {
-        VideoBean bean = new VideoBean();
-        bean.setId(System.currentTimeMillis() + "");
-        bean.setIsZn("0");
-        bean.setIsPublic("0");
-        bean.setIsAd("99");
-        videoBeans.add(2, bean);
+        loadAd();
       }
       videoAdapter.addData(videoBeans);
       if (videoAdapter.getData().size() > 0) {
@@ -709,6 +720,41 @@ public class VideoPlayFragment extends BaseFragment
       ToastUtil.show(msg);
     }
     swipeRefreshLayout.finishRefresh(true);
+  }
+
+  public void loadAd() {
+    DisplayMetrics dm = new DisplayMetrics();
+    getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+    ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
+    ZjExpressFeedFullVideo expressFeedFullVideo =
+        new ZjExpressFeedFullVideo(getActivity(), "zjad_241112", size, new ZjExpressFeedFullVideoListener() {
+
+          @Override
+          public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
+            LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
+
+            for (ZjExpressFeedFullVideoAd ksDrawAd : ads) {
+              if (ksDrawAd == null) {
+                continue;
+              }
+
+              VideoBean bean = new VideoBean();
+              bean.setId(System.currentTimeMillis() + "");
+              bean.setIsZn("0");
+              bean.setIsPublic("0");
+              bean.setIsAd("99");
+              bean.setAdItem(ksDrawAd);
+              videoAdapter.addData(bean);
+              break;
+            }
+          }
+
+          @Override
+          public void onZjAdError(ZjAdError error) {
+            LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
+          }
+        });
+    expressFeedFullVideo.loadAd(1);
   }
 
   private void loadMoreData(boolean showLoadTxt) {
