@@ -3,35 +3,40 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent">
+    android:background="@color/transparent"
+    >
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@mipmap/icon_stall_bg"
-        android:gravity="top"
-        android:paddingStart="70dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="15dp"
-        android:text="令牌/0.00个元宝"
-        android:textColor="@color/black"
-        android:textSize="12sp" />
+  <TextView
+      android:id="@+id/tvTitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:background="@mipmap/icon_stall_bg"
+      android:gravity="top"
+      android:paddingStart="70dp"
+      android:paddingTop="10dp"
+      android:paddingEnd="15dp"
+      android:text="令牌/0.00个元宝"
+      android:textColor="@color/black"
+      android:textSize="12sp"
+      />
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvTitle"
-        android:layout_alignStart="@id/tvTitle"
-        android:layout_alignEnd="@id/tvTitle"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:singleLine="true"
-        android:text="***的店铺"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+  <TextView
+      android:id="@+id/tvName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/tvTitle"
+      android:layout_alignStart="@id/tvTitle"
+      android:layout_alignEnd="@id/tvTitle"
+      android:layout_gravity="center"
+      android:gravity="center_horizontal"
+      android:paddingTop="0dp"
+      android:paddingBottom="10dp"
+      android:singleLine="true"
+      android:text="***的店铺"
+      android:textColor="@color/black"
+      android:textSize="12sp"
+      android:textStyle="bold"
+      />
 
 </RelativeLayout>

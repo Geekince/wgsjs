@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
-
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.frame.fire.util.LogUtils;
 import com.umeng.socialize.UMAuthListener;
@@ -24,19 +24,16 @@ import com.wwsl.wgsj.http.HttpUtil;
 import com.wwsl.wgsj.utils.DialogUtil;
 import com.wwsl.wgsj.utils.ToastUtil;
 import com.wwsl.wgsj.utils.WordUtil;
-
 import java.util.Map;
-
-import cn.hutool.core.util.StrUtil;
 
 public class UserAccountManageActivity extends BaseActivity {
 
     private TextView tvPhone;
     private TextView tvIdentify;
     private TextView tvWxId;
-    private TextView tvSuperiorTgCode;
+    private TextView     tvSuperiorTgCode;
     private Switch phoneSwitch;
-    private boolean isIdentify;
+    private boolean      isIdentify;
     private boolean isBindWx;
     private String pid;
 

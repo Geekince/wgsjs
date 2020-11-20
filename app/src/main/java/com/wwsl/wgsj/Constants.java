@@ -289,7 +289,7 @@ public class Constants {
   public static final int VIDEO_CLICK_DS      = 9;
 
   public static final String AD_APP_ID          = "zj_11120200724027";
-  public static final String AD_VIDEO_LIST_ID   = "zjad_241112";
+  public static final String AD_VIDEO_LIST_ID   = "zjad_241116";
   public static final String AD_SPLASH_ID       = "zjad_241111";
   public static final String AD_VIDEO_REWARD_ID = "zjad_241110";
 }

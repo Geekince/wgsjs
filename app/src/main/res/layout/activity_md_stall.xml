@@ -188,7 +188,8 @@
         android:layout_height="55dp"
         android:background="@color/transparent"
         android:onClick="goDetail"
-        app:layout_constraintBottom_toTopOf="@+id/btnMd"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/leftStall1"
         app:layout_constraintTop_toBottomOf="@+id/leftStall2">
 

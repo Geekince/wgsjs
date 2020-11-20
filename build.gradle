@@ -48,7 +48,7 @@ ext {
     targetSdkVersion = 28
     appTargetSdkVersion = 28
     versionCode = 23
-    versionName = "1.0.4"
+    versionName = "1.0.5"
     sdkSourceCompatibility = JavaVersion.VERSION_1_8
     sdkTargetCompatibility = JavaVersion.VERSION_1_8
     appSourceCompatibility = JavaVersion.VERSION_1_8
