@@ -98,7 +98,7 @@ public class MdOrderSubFragment extends BaseFragment implements SwipeRecyclerVie
                     mUploadStrategy.upload(files, new PictureUploadCallback() {
                         @Override
                         public void onSuccess(String url) {
-                            HttpUtil.orderUploadCertificate(curOrderId, path, new HttpCallback() {
+                            HttpUtil.orderUploadCertificate(curOrderId, url, new HttpCallback() {
                                 @Override
                                 public void onSuccess(int code, String msg, String[] info) {
                                     if (code == 200) {
@@ -200,7 +200,7 @@ public class MdOrderSubFragment extends BaseFragment implements SwipeRecyclerVie
         if (mType == MdOrderFragment.TYPE_SALE) {
             if (subType == ORDER_CONFIRM) {
                 MdOrderShowBean bean = data.get(position);
-                WebViewActivity.forward(getContext(), String.format("%s&uid=%s&token=%s&orderid=", HtmlConfig.WEB_LINK_MD_REPORT_BASE, AppConfig.getInstance().getUid(), AppConfig.getInstance().getToken(), bean.getOrderNum()));
+                WebViewActivity.forward(getContext(), String.format("%s&orderid=%s", HtmlConfig.WEB_LINK_MD_REPORT_BASE,bean.getId()));
             }
         } else {
             if (subType == ORDER_PROCESSING || subType == ORDER_CONFIRM) {
