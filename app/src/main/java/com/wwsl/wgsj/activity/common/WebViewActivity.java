@@ -24,6 +24,7 @@ import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.wwsl.wgsj.AppConfig;
@@ -169,7 +170,7 @@ public class WebViewActivity extends AbsActivity {
         mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-//        mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setDatabaseEnabled(true);
 

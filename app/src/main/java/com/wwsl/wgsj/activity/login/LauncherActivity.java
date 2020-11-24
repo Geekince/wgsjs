@@ -98,9 +98,6 @@ public class LauncherActivity extends AppCompatActivity {
   private        FrameLayout                     zjContainer;
   private        ZjSplashAd                      splashAd;
   //视频广告 本地广告
-  private        RelativeLayout                  ui_video;
-  private        VideoView                       mVideoView;
-  private        View                            clickView;
   private        ControlWrapper                  mControlWrapper;
   private        int                             videoIndex = 0;
   private        String                          videoAdUrl = "";
@@ -124,7 +121,6 @@ public class LauncherActivity extends AppCompatActivity {
    */
   private int     mGoType            = 0;
   private boolean isGrand            = false;//是否已经授权
-  private boolean isPlayEnd          = false;//视频是否播放完毕
   private boolean isLoadConfigFinish = false;//是否已配置完成
   private boolean isNeedVersion      = false;//是否强制更新apk
   private boolean isGoShowingAd      = false;//是点击了广告
@@ -143,7 +139,6 @@ public class LauncherActivity extends AppCompatActivity {
     switch (msg.what) {
       case 11:
         initZJAd();
-        isPlayEnd = true;
       case 12:
         prepareFinish();
         break;
@@ -162,7 +157,6 @@ public class LauncherActivity extends AppCompatActivity {
       @Override
       public void onZjAdLoadTimeOut() {
         LogUtils.e("myth", "onZjAdLoadTimeOut(--)广告加载超时...");
-        goNext("");
       }
 
       @Override
@@ -179,7 +173,7 @@ public class LauncherActivity extends AppCompatActivity {
       @Override
       public void onZjAdTickOver() {
         LogUtils.e("myth", "onZjAdTickOver");
-        if (!isAdDismiss){
+        if (!isAdDismiss) {
           goNext("");
         }
       }
@@ -232,15 +226,6 @@ public class LauncherActivity extends AppCompatActivity {
 
     zjContainer = findViewById(R.id.rootView);
 
-    ui_video = findViewById(R.id.ui_video);
-    mVideoView = findViewById(R.id.videoView);
-    clickView = findViewById(R.id.clickView);
-    if (!StringUtil.isEmpty(videoAdUrl)) {
-      clickView.setOnClickListener(v -> {
-        isGoShowingAd = true;
-        goNext(videoAdUrl);
-      });
-    }
 
     ui_img = findViewById(R.id.ui_img);
     ivAdvert = findViewById(R.id.ivAdvert);
@@ -254,13 +239,10 @@ public class LauncherActivity extends AppCompatActivity {
     downloadLayout = findViewById(R.id.updateLayout);
     loadPb = findViewById(R.id.loadPb);
 
-    initVideoView();
     loadSpData();
-
 
     //1.检查权限
     checkPermission();
-
   }
 
   /**
@@ -277,103 +259,6 @@ public class LauncherActivity extends AppCompatActivity {
     String[] uidAndToken = SpUtil.getInstance().getMultiStringValue(SpUtil.UID, SpUtil.TOKEN);
     this.uid = uidAndToken[0];
     this.token = uidAndToken[1];
-  }
-
-  private void initVideoView() {
-    mVideoView.setPlayerFactory(ExoMediaPlayerFactory.create());
-    mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
-    int rid = R.raw.launch_video;
-    String intt = DatePickerUtil.formatDate(System.currentTimeMillis(), "yyyyMMdd");
-    try {
-      int anInt = Integer.parseInt(intt);
-      if (anInt > 20200930 && anInt < 20201009) {
-        rid = R.raw.national_day;
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(rid));
-    RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
-    try {
-      rawResourceDataSource.open(dataSpec);
-    } catch (RawResourceDataSource.RawResourceDataSourceException e) {
-      e.printStackTrace();
-    }
-    String url = rawResourceDataSource.getUri().toString();
-    mVideoView.setUrl(url);
-    mVideoView.setLooping(false);
-    BaseVideoController baseVideoController = new BaseVideoController(this) {
-      @Override
-      protected int getLayoutId() {
-        return 0;
-      }
-    };
-    baseVideoController.addControlComponent(new IControlComponent() {
-      @Override
-      public void attach(@NonNull ControlWrapper controlWrapper) {
-        mControlWrapper = controlWrapper;
-      }
-
-      @Override
-      public View getView() {
-        return null;
-      }
-
-      @Override
-      public void onVisibilityChanged(boolean isVisible, Animation anim) {
-      }
-
-      @Override
-      public void onPlayStateChanged(int playState) {
-      }
-
-      @Override
-      public void onPlayerStateChanged(int playerState) {
-      }
-
-      @Override
-      public void setProgress(int duration, int position) {
-      }
-
-      @Override
-      public void onLockStateChanged(boolean isLocked) {
-      }
-    });
-    mVideoView.setVideoController(baseVideoController);
-    mVideoView.setOnStateChangeListener(new VideoView.OnStateChangeListener() {
-      @Override
-      public void onPlayerStateChanged(int playerState) {
-      }
-
-      @Override
-      public void onPlayStateChanged(int playState) {
-        switch (playState) {
-          case VideoView.STATE_PLAYING://3
-            mControlWrapper.startProgress();
-            break;
-          case VideoView.STATE_PREPARING://1
-            //静音播放
-            //                        mVideoView.setMute(true);
-            break;
-          case VideoView.STATE_PLAYBACK_COMPLETED://5
-            //启动视频
-            isPlayEnd = true;
-            if (videoIndex == 1) {
-              //填补空白等待页
-              Bitmap bitmap = mControlWrapper.doScreenShot();
-              window.setBackgroundDrawable(new BitmapDrawable(bitmap));
-              window.setLayout(bitmap.getWidth(), bitmap.getHeight());
-              handler.sendEmptyMessage(12);
-            } else if (videoIndex == 2) {
-              //广告视频
-              if (!isGoShowingAd) {
-                goNext("");
-              }
-            }
-            break;
-        }
-      }
-    });
   }
 
   private void loadCity() {
@@ -455,7 +340,6 @@ public class LauncherActivity extends AppCompatActivity {
               LocationUtil.getInstance().startLocation();
             }
             if (deniedList.contains(ps[1]) || deniedList.contains(ps[0])) {
-              isGrand = false;
               ToastUtil.show("部分权限未授权,部分功能不能正常使用");
             }
             isGrand = true;
@@ -477,10 +361,8 @@ public class LauncherActivity extends AppCompatActivity {
       launch_img.setVisibility(View.VISIBLE);
       downloadLayout.setVisibility(View.GONE);
       ui_img.setVisibility(View.GONE);
-      ui_video.setVisibility(View.GONE);
       zjContainer.setVisibility(View.GONE);
     } else if (i == 2) {
-      ui_video.setVisibility(View.VISIBLE);
       downloadLayout.setVisibility(View.GONE);
       ui_img.setVisibility(View.GONE);
       zjContainer.setVisibility(View.GONE);
@@ -488,19 +370,16 @@ public class LauncherActivity extends AppCompatActivity {
     } else if (i == 3) {
       ui_img.setVisibility(View.VISIBLE);
       downloadLayout.setVisibility(View.GONE);
-      ui_video.setVisibility(View.GONE);
       zjContainer.setVisibility(View.GONE);
       launch_img.setVisibility(View.GONE);
     } else if (i == 4) {
       zjContainer.setVisibility(View.VISIBLE);
       downloadLayout.setVisibility(View.GONE);
       ui_img.setVisibility(View.GONE);
-      ui_video.setVisibility(View.GONE);
       launch_img.setVisibility(View.GONE);
     } else if (i == 5) {
       downloadLayout.setVisibility(View.VISIBLE);
       ui_img.setVisibility(View.GONE);
-      ui_video.setVisibility(View.GONE);
       zjContainer.setVisibility(View.GONE);
       launch_img.setVisibility(View.GONE);
     }
@@ -537,47 +416,47 @@ public class LauncherActivity extends AppCompatActivity {
                 } else {
                   LogUtils.e(TAG, "获取用户最新数据失败");
                 }
+                handler.sendEmptyMessage(12);
               }
             });
           }
         } else {
           ToastUtil.show("配置获取失败");
           mGoType = 0;
+          handler.sendEmptyMessage(12);
         }
       }
     });
   }
 
   private void showAdvertise() {
-    ConfigBean configBean = AppConfig.getInstance().getConfig();
-    List<LaunchAdBean> adList = configBean.getAdList();
-    if (null != adList && adList.size() == 1 && "1".equals(configBean.getIsLaunch())) {
-      LaunchAdBean launchAdBean = adList.get(0);
-      if ("1".equals(launchAdBean.getType()) && !StrUtil.isEmpty(launchAdBean.getThumb())) {
-        //图片
-        mCountdownView.setVisibility(View.GONE);
-        setAdvert(launchAdBean.getThumb(), launchAdBean.getUrl());
-      } else if ("2".equals(launchAdBean.getType()) && !StrUtil.isEmpty(launchAdBean.getThumb())) {
-        showUI(2);
-        //视频
-        videoIndex = 2;
-        videoAdUrl = launchAdBean.getUrl();
-        mVideoView.release();
-        mVideoView.setUrl(launchAdBean.getThumb());
-        mVideoView.start();
-      } else {
-        showAd3();
-      }
-    } else {
-      showAd3();
-    }
+    showAd3();
+    //ConfigBean configBean = AppConfig.getInstance().getConfig();
+    //List<LaunchAdBean> adList = configBean.getAdList();
+    //if (null != adList && adList.size() == 1 && "1".equals(configBean.getIsLaunch())) {
+    //  LaunchAdBean launchAdBean = adList.get(0);
+    //  if ("1".equals(launchAdBean.getType()) && !StrUtil.isEmpty(launchAdBean.getThumb())) {
+    //    //图片
+    //    mCountdownView.setVisibility(View.GONE);
+    //    setAdvert(launchAdBean.getThumb(), launchAdBean.getUrl());
+    //  } else if ("2".equals(launchAdBean.getType()) && !StrUtil.isEmpty(launchAdBean.getThumb())) {
+    //    showUI(2);
+    //    //视频
+    //    videoIndex = 2;
+    //    videoAdUrl = launchAdBean.getUrl();
+    //    mVideoView.release();
+    //    mVideoView.setUrl(launchAdBean.getThumb());
+    //    mVideoView.start();
+    //  } else {
+    //    showAd3();
+    //  }
+    //} else {
+    //  showAd3();
+    //}
   }
 
   @Override
   protected void onDestroy() {
-    if (mVideoView != null) {
-      mVideoView.release();
-    }
     HttpUtil.cancel(HttpConst.IF_TOKEN);
     HttpUtil.cancel(HttpConst.GET_BASE_INFO);
     HttpUtil.cancel(HttpConst.GET_CONFIG);
@@ -733,7 +612,7 @@ public class LauncherActivity extends AppCompatActivity {
    * 准备完成事件
    */
   public void prepareFinish() {
-    if (isGrand && isPlayEnd && isLoadConfigFinish) {
+    if (isGrand && isLoadConfigFinish) {
       ConfigBean configBean = AppConfig.getInstance().getConfig();
       if (isNeedVersion && "1".equals(configBean.getIsNeedUpdate())) {
         VersionUtil.showDialog(
