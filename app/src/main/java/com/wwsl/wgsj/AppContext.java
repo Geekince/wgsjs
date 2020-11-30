@@ -67,7 +67,7 @@ public class AppContext extends MultiDexApplication {
         if (sDeBug) {
             Logger.addLogAdapter(new AndroidLogAdapter());
         }
-
+        LogUtils.e(TAG, "init---->初始化众简广告");
         ZjSdk.init(this, Constants.AD_APP_ID);
         //初始化Http
         HttpUtil.init();

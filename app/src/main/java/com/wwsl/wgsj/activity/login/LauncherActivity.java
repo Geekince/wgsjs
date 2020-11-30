@@ -137,8 +137,6 @@ public class LauncherActivity extends AppCompatActivity {
 
   private final Handler handler = new Handler(msg -> {
     switch (msg.what) {
-      case 11:
-        initZJAd();
       case 12:
         prepareFinish();
         break;
@@ -239,8 +237,8 @@ public class LauncherActivity extends AppCompatActivity {
     downloadLayout = findViewById(R.id.updateLayout);
     loadPb = findViewById(R.id.loadPb);
 
-    loadSpData();
 
+    loadSpData();
     //1.检查权限
     checkPermission();
   }
@@ -306,7 +304,6 @@ public class LauncherActivity extends AppCompatActivity {
     if (lps.size() == 0) {
       isGrand = true;
       getConfig();
-      handler.sendEmptyMessageDelayed(11, 4000);
     } else {
       //暂时没有适配android 10 后台定位
       PermissionX.init(this)
@@ -344,7 +341,6 @@ public class LauncherActivity extends AppCompatActivity {
             }
             isGrand = true;
             getConfig();
-            handler.sendEmptyMessageDelayed(11, 4000);
           });
     }
   }
@@ -612,6 +608,7 @@ public class LauncherActivity extends AppCompatActivity {
    * 准备完成事件
    */
   public void prepareFinish() {
+    initZJAd();
     if (isGrand && isLoadConfigFinish) {
       ConfigBean configBean = AppConfig.getInstance().getConfig();
       if (isNeedVersion && "1".equals(configBean.getIsNeedUpdate())) {

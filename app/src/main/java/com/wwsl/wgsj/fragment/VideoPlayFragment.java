@@ -725,7 +725,6 @@ public class VideoPlayFragment extends BaseFragment
               @Override
               public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
-                int itemSize = newDataSize;
                 if (ads.size() == 1) {
                   VideoBean bean = new VideoBean();
                   bean.setId(System.currentTimeMillis() + "");
@@ -741,7 +740,7 @@ public class VideoPlayFragment extends BaseFragment
                   bean1.setIsPublic("0");
                   bean1.setIsAd("99");
                   bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(preSize + itemSize / 2, bean1);
+                  videoAdapter.addData(preSize + newDataSize / 2, bean1);
                   VideoBean bean2 = new VideoBean();
                   bean2.setId(System.currentTimeMillis() + "");
                   bean2.setIsZn("0");
@@ -750,7 +749,7 @@ public class VideoPlayFragment extends BaseFragment
                   bean2.setAdItem(ads.get(1));
                   videoAdapter.addData(bean2);
                 } else if (ads.size() == 3) {
-                  int per = itemSize / 3;
+                  int per = newDataSize / 3;
                   VideoBean bean1 = new VideoBean();
                   bean1.setId(System.currentTimeMillis() + "");
                   bean1.setIsZn("0");
