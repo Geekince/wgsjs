@@ -415,6 +415,9 @@ public class LauncherActivity extends AppCompatActivity {
                 handler.sendEmptyMessage(12);
               }
             });
+          }else{
+            mGoType = 0;
+            handler.sendEmptyMessage(12);
           }
         } else {
           ToastUtil.show("配置获取失败");
