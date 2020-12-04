@@ -14,7 +14,7 @@ android {
             keyAlias 'wwslsoft'
             keyPassword 'wwslsoft'
             keyPassword 'wwslsoft'
-            storeFile file('C:\\Edisk\\AndroidPro\\temp\\bs035-android\\wgsj.jks')
+            storeFile file('E:\\project\\temp\\wgsj\\wgsj.jks')
             storePassword 'wwslsoft'
         }
     }
@@ -57,8 +57,8 @@ android {
             //开发 屏蔽签名
 //            signingConfig signingConfigs.release
             resValue "string", "app_name_live", "@string/app_name_debug"
-            buildConfigField 'String', 'SERVER_URL', '"http://test_zb.zjwgsj.com"'
-//            buildConfigField 'String', 'SERVER_URL', '"http://wgsj.zjwgsj.com"'
+//            buildConfigField 'String', 'SERVER_URL', '"http://test_zb.zjwgsj.com"'
+            buildConfigField 'String', 'SERVER_URL', '"http://wgsj.zjwgsj.com"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -173,11 +173,12 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     //gif库，播放礼物gif用
-    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.20'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.20'
 
     //腾讯短视频sdk
-    api(name: 'LiteAVSDK_Professional_7.0.8670', ext: 'aar')
+    implementation(name: 'LiteAVSDK_Professional_7.0.8670', ext: 'aar')
 
+    implementation(name: 'open_ad_sdk', ext: 'aar')
 
     api(name: 'alipaySdk-15.7.7-20200702160044', ext: 'aar')
     //exoplayer

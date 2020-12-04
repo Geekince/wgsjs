@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.RequiresApi;
 
 import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces .WebResourceRequest;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;

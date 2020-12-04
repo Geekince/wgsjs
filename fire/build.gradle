@@ -33,9 +33,9 @@ dependencies {
 
 
     api files('./libs/commons-io-1.4.jar')
-    api files('./libs/msa_mdid.aar')
-    api files('./libs/zj_kssdk.aar')
-    api files('./libs/zj_sdk_2.1.4.aar')
+//    api files('./libs/msa_mdid.aar')
+    api files('./libs/zj_kssdk_ad.aar')
+    api files('./libs/zj_sdk_2.1.9_wgsj1204.aar')
     //带圆角，边框的的ImageView
     api 'com.makeramen:roundedimageview:2.3.0'
     //eventbus事件总线

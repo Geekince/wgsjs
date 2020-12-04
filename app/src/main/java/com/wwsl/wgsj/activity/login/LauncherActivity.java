@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +35,11 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTAdConstant;
+import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
+import com.bytedance.sdk.openadsdk.TTSplashAd;
 import com.dueeeke.videoplayer.controller.BaseVideoController;
 import com.dueeeke.videoplayer.controller.ControlWrapper;
 import com.dueeeke.videoplayer.controller.IControlComponent;
@@ -50,6 +57,7 @@ import com.wwsl.wgsj.Constants;
 import com.wwsl.wgsj.R;
 import com.wwsl.wgsj.activity.MainActivity;
 import com.wwsl.wgsj.activity.common.WebViewActivity;
+import com.wwsl.wgsj.ad.TTAdManagerHolder;
 import com.wwsl.wgsj.bean.ConfigBean;
 import com.wwsl.wgsj.bean.LaunchAdBean;
 import com.wwsl.wgsj.bean.PartnerCityBean;
@@ -64,6 +72,7 @@ import com.wwsl.wgsj.interfaces.NoDoubleClickListener;
 import com.wwsl.wgsj.utils.DialogUtil;
 import com.wwsl.wgsj.utils.DownloadUtil;
 import com.wwsl.wgsj.utils.LocationUtil;
+import com.wwsl.wgsj.utils.ScreenDimenUtil;
 import com.wwsl.wgsj.utils.SpUtil;
 import com.wwsl.wgsj.utils.StringUtil;
 import com.wwsl.wgsj.utils.SystemUtil;
@@ -94,36 +103,39 @@ public class LauncherActivity extends AppCompatActivity {
   private static WeakReference<LauncherActivity> instance;
   private        Window                          window;
   protected      Context                         mContext;
-  //众简广告
-  private        FrameLayout                     zjContainer;
-  private        ZjSplashAd                      splashAd;
-  //视频广告 本地广告
-  private        ControlWrapper                  mControlWrapper;
-  private        int                             videoIndex = 0;
-  private        String                          videoAdUrl = "";
-  //图片广告
-  private        RelativeLayout                  ui_img;
-  private        ImageView                       ivAdvert;
-  private        TextView                        tvAdvertSkip;
-  private        CountdownView                   mCountdownView;
-  private        AdvertSkipView                  advertSkipView;
-  //apk更新
-  private        ConstraintLayout                downloadLayout;
-  private        RingProgressBar                 loadPb;
-  //启动图片
-  private        ImageView                       launch_img;
 
+  //图片广告
+  private RelativeLayout   ui_img;
+  private ImageView        ivAdvert;
+  private TextView         tvAdvertSkip;
+  private CountdownView    mCountdownView;
+  private AdvertSkipView   advertSkipView;
+  //apk更新
+  private ConstraintLayout downloadLayout;
+  private RingProgressBar  loadPb;
+  //启动图片
+  private ImageView        launch_img;
+
+  //穿山甲广告
+  private static final int         AD_TIME_OUT        = 3000;
+  private              FrameLayout zjContainer;
+  private              TTAdNative  mTTAdNative;
+  private              String      mCodeId            = "887409984";
+  private              boolean     mIsExpress         = false;
+  private              TTSplashAd  loadAd;
+  //是否强制跳转到主页面
+  private              boolean     mForceGoMain;
   /**
    * 0.登录
    * 1.进主页
    * 2.绑定微信
    * 3.绑定手机号
    */
-  private int     mGoType            = 0;
-  private boolean isGrand            = false;//是否已经授权
-  private boolean isLoadConfigFinish = false;//是否已配置完成
-  private boolean isNeedVersion      = false;//是否强制更新apk
-  private boolean isGoShowingAd      = false;//是点击了广告
+  private              int         mGoType            = 0;
+  private              boolean     isGrand            = false;//是否已经授权
+  private              boolean     isLoadConfigFinish = false;//是否已配置完成
+  private              boolean     isNeedVersion      = false;//是否强制更新apk
+  private              boolean     isGoShowingAd      = false;//是点击了广告
 
   private String   phone;
   private String   uid;
@@ -144,53 +156,57 @@ public class LauncherActivity extends AppCompatActivity {
     return true;
   });
 
-  //众简广告初始化开屏广告
-  private void initZJAd() {
-    splashAd = new ZjSplashAd(this, new ZjSplashAdListener() {
+  //广告初始化开屏广告
+  private void initAd() {
+    //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
+    int screenHeight = ScreenDimenUtil.getInstance().getScreenHeight();
+    int screenWidth = ScreenDimenUtil.getInstance().getScreenWdith();
+    AdSlot adSlot = null;
+    if (mIsExpress) {
+      //个性化模板广告需要传入期望广告view的宽、高，单位dp，请传入实际需要的大小，
+      //比如：广告下方拼接logo、适配刘海屏等，需要考虑实际广告大小
+      //float expressViewWidth = UIUtils.getScreenWidthDp(this);
+      //float expressViewHeight = UIUtils.getHeight(this);
+      adSlot = new AdSlot.Builder()
+          .setCodeId(mCodeId)
+          //模板广告需要设置期望个性化模板广告的大小,单位dp,代码位是否属于个性化模板广告，请在穿山甲平台查看
+          //view宽高等于图片的宽高
+          .setExpressViewAcceptedSize(screenWidth, screenHeight)
+          .build();
+    } else {
+      adSlot = new AdSlot.Builder()
+          .setCodeId(mCodeId)
+          .setImageAcceptedSize(screenWidth, screenHeight)
+          .build();
+    }
+
+    //step4:请求广告，调用开屏广告异步请求接口，对请求回调的广告作渲染处理
+    mTTAdNative.loadSplashAd(adSlot, new TTAdNative.SplashAdListener() {
       @Override
-      public void onZjAdLoaded() {
-        LogUtils.e("myth", "onZjAdLoaded: ");
+      @MainThread
+      public void onError(int code, String message) {
+        LogUtils.e(TAG, "onError" + "code->" + code + ",message->" + message);
+        goNext("");
       }
 
       @Override
-      public void onZjAdLoadTimeOut() {
-        LogUtils.e("myth", "onZjAdLoadTimeOut(--)广告加载超时...");
+      @MainThread
+      public void onTimeout() {
+        LogUtils.e(TAG, "onTimeout");
+        goNext("");
       }
 
       @Override
-      public void onZjAdShow() {
-        LogUtils.e("myth", "onZjAdShow");
-      }
-
-      @Override
-      public void onZjAdClicked() {
-        LogUtils.e("myth", "onZjAdClicked");
-      }
-
-      //倒计时结束
-      @Override
-      public void onZjAdTickOver() {
-        LogUtils.e("myth", "onZjAdTickOver");
-        if (!isAdDismiss) {
-          goNext("");
+      @MainThread
+      public void onSplashAdLoad(TTSplashAd ad) {
+        LogUtils.e(TAG, "onSplashAdLoad: 加载中...");
+        if (ad == null) {
+          return;
         }
+        loadAd = ad;
+        //获取SplashView
       }
-
-      //跳过
-      @Override
-      public void onZjAdDismissed() {
-        isAdDismiss = true;
-        LogUtils.e("myth", "onZjAdDismissed");
-        goNext("");
-      }
-
-      @Override
-      public void onZjAdError(ZjAdError zjAdError) {
-        LogUtils.e("myth",
-            "onZjAdError(--)" + zjAdError.getErrorCode() + "-" + zjAdError.getErrorMsg());
-        goNext("");
-      }
-    }, Constants.AD_SPLASH_ID, 3);
+    }, AD_TIME_OUT);
   }
 
   public boolean isAdDismiss = false;
@@ -223,7 +239,7 @@ public class LauncherActivity extends AppCompatActivity {
     mContext = this;
 
     zjContainer = findViewById(R.id.rootView);
-
+    mTTAdNative = TTAdManagerHolder.get().createAdNative(this);
 
     ui_img = findViewById(R.id.ui_img);
     ivAdvert = findViewById(R.id.ivAdvert);
@@ -236,8 +252,7 @@ public class LauncherActivity extends AppCompatActivity {
 
     downloadLayout = findViewById(R.id.updateLayout);
     loadPb = findViewById(R.id.loadPb);
-
-
+    initAd();
     loadSpData();
     //1.检查权限
     checkPermission();
@@ -248,7 +263,110 @@ public class LauncherActivity extends AppCompatActivity {
    */
   private void showAd3() {
     showUI(4);
-    splashAd.fetchAndShowIn(zjContainer);
+    showAd();
+  }
+
+  @Override
+  protected void onResume() {
+    //判断是否该跳转到主页面
+    if (mForceGoMain) {
+      goNext("");
+    }
+    super.onResume();
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    mForceGoMain = true;
+  }
+
+  private void showAd() {
+
+    if (loadAd != null){
+      View view = loadAd.getSplashView();
+      if (view != null && zjContainer != null && !LauncherActivity.this.isFinishing()) {
+        zjContainer.removeAllViews();
+        //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕高
+        zjContainer.addView(view);
+        //设置不开启开屏广告倒计时功能以及不显示跳过按钮,如果这么设置，您需要自定义倒计时逻辑
+        //ad.setNotAllowSdkCountdown();
+      } else {
+        goNext("");
+      }
+
+      //设置SplashView的交互监听器
+      loadAd.setSplashInteractionListener(new TTSplashAd.AdInteractionListener() {
+        @Override
+        public void onAdClicked(View view, int type) {
+          LogUtils.e(TAG, "onAdClicked: ");
+        }
+
+        @Override
+        public void onAdShow(View view, int type) {
+          LogUtils.e(TAG, "onAdShow: ");
+        }
+
+        @Override
+        public void onAdSkip() {
+          LogUtils.e(TAG, "onAdSkip: ");
+
+          isAdDismiss = true;
+          goNext("");
+        }
+
+        @Override
+        public void onAdTimeOver() {
+          LogUtils.e(TAG, "onAdTimeOver: ");
+          if (!isAdDismiss) {
+            goNext("");
+          }
+        }
+      });
+      if (loadAd.getInteractionType() == TTAdConstant.INTERACTION_TYPE_DOWNLOAD) {
+        loadAd.setDownloadListener(new TTAppDownloadListener() {
+          boolean hasShow = false;
+
+          @Override
+          public void onIdle() {
+          }
+
+          @Override
+          public void onDownloadActive(long totalBytes, long currBytes, String fileName,
+              String appName) {
+            if (!hasShow) {
+
+              LogUtils.e(TAG, "下载中...: ");
+              hasShow = true;
+            }
+          }
+
+          @Override
+          public void onDownloadPaused(long totalBytes, long currBytes, String fileName,
+              String appName) {
+            LogUtils.e(TAG, "下载暂停...: ");
+          }
+
+          @Override
+          public void onDownloadFailed(long totalBytes, long currBytes, String fileName,
+              String appName) {
+            LogUtils.e(TAG, "下载失败...: ");
+          }
+
+          @Override
+          public void onDownloadFinished(long totalBytes, String fileName, String appName) {
+            LogUtils.e(TAG, "下载完成...: ");
+          }
+
+          @Override
+          public void onInstalled(String fileName, String appName) {
+            LogUtils.e(TAG, "安装完成...: ");
+          }
+        });
+      }
+    }else {
+      goNext("");
+    }
   }
 
   private void loadSpData() {
@@ -415,7 +533,7 @@ public class LauncherActivity extends AppCompatActivity {
                 handler.sendEmptyMessage(12);
               }
             });
-          }else{
+          } else {
             mGoType = 0;
             handler.sendEmptyMessage(12);
           }
@@ -611,7 +729,6 @@ public class LauncherActivity extends AppCompatActivity {
    * 准备完成事件
    */
   public void prepareFinish() {
-    initZJAd();
     if (isGrand && isLoadConfigFinish) {
       ConfigBean configBean = AppConfig.getInstance().getConfig();
       if (isNeedVersion && "1".equals(configBean.getIsNeedUpdate())) {

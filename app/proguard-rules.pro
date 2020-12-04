@@ -29,6 +29,10 @@
 #-packageobfuscationdictionary ./proguard-keys.txt
 #-obfuscationdictionary ./proguard-keys.txt
 
+-keep class com.bytedance.sdk.openadsdk.** { *; }
+-keep public interface com.bytedance.sdk.openadsdk.downloadnew.** {*;}
+-keep class com.pgl.sys.ces.* {*;}
+
 -keep class com.simple.spiderman.** { *; }
 -keepnames class com.simple.spiderman.** { *; }
 -keep public class * extends android.app.Activity

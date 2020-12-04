@@ -8,6 +8,9 @@ import android.os.Bundle;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
+import com.bytedance.sdk.openadsdk.TTAdConfig;
+import com.bytedance.sdk.openadsdk.TTAdConstant;
+import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
@@ -23,6 +26,7 @@ import com.tencent.rtmp.TXLiveBase;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.ugc.TXUGCBase;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
+import com.wwsl.wgsj.ad.TTAdManagerHolder;
 import com.wwsl.wgsj.http.HttpUtil;
 import com.wwsl.wgsj.im.ImMessageUtil;
 import com.wwsl.wgsj.im.ImPushUtil;
@@ -69,6 +73,8 @@ public class AppContext extends MultiDexApplication {
         }
         LogUtils.e(TAG, "init---->初始化众简广告");
         ZjSdk.init(this, Constants.AD_APP_ID);
+        TTAdManagerHolder.init(this);
+
         //初始化Http
         HttpUtil.init();
         //全局配置视频解码器
@@ -83,6 +89,7 @@ public class AppContext extends MultiDexApplication {
         asyncInitSDK();
 
     }
+
 
     //异步初始化sdk
     private void asyncInitSDK() {
