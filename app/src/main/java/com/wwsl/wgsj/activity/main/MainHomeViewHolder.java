@@ -160,4 +160,10 @@ public class MainHomeViewHolder extends AbsMainViewHolder {
             personalHomeFragment.updateUserInfo(uid);
         }
     }
+
+    public void adRewardBack(int times){
+        if (mainHomeFragment!= null){
+            mainHomeFragment.adRewardBack(times);
+        }
+    }
 }

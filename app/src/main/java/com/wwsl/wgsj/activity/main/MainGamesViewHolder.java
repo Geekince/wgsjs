@@ -70,9 +70,5 @@ public class MainGamesViewHolder extends AbsMainViewHolder {
         tabLayout.setViewPager(viewPager, titles);
     }
 
-    public void adRewardBack(int times){
-        if (todayFragment!= null){
-            todayFragment.adRewardBack(times);
-        }
-    }
+
 }

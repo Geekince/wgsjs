@@ -3,10 +3,14 @@ package com.wwsl.wgsj.adapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dueeeke.videoplayer.player.VideoView;
@@ -40,6 +44,7 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
     addItemType(3, R.layout.item_tik_tok);//正常视频
     addItemType(1, R.layout.item_tik_tok);//助农
     addItemType(2, R.layout.item_tik_tok);//广告
+    addItemType(98, R.layout.item_tik_tok_csj);//众简广告
     addItemType(99, R.layout.item_tik_tok_zj);//众简广告
     this.mContext = context;
     this.videoType = videoType;
@@ -62,7 +67,7 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
   @Override
   protected void convert(@NonNull BaseViewHolder helper, VideoBean item) {
     if (item.getItemType() == 99) {
-      LogUtils.e("myth", "加载广告...............");
+      LogUtils.e("myth", "加载众简广告...............");
       ZjExpressFeedFullVideoAd itemAd = item.getAdItem();
       FrameLayout container = helper.getView(R.id.container_ad);
       if (itemAd != null) {
@@ -95,7 +100,83 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
             });
         itemAd.render();
       }
-    } else {
+
+    } else if (item.getItemType() == 98){
+      LogUtils.e("myth", "加载穿山甲广告...............");
+      FrameLayout container = helper.getView(R.id.container_ad_csj);
+      TTNativeExpressAd cAdItem = item.getCAdItem();
+      cAdItem.setVideoAdListener(new TTNativeExpressAd.ExpressVideoAdListener() {
+        @Override
+        public void onVideoLoad() {
+
+        }
+
+        @Override
+        public void onVideoError(int errorCode, int extraCode) {
+
+        }
+
+        @Override
+        public void onVideoAdStartPlay() {
+
+        }
+
+        @Override
+        public void onVideoAdPaused() {
+
+        }
+
+        @Override
+        public void onVideoAdContinuePlay() {
+
+        }
+
+        @Override
+        public void onProgressUpdate(long current, long duration) {
+
+        }
+
+        @Override
+        public void onVideoAdComplete() {
+
+        }
+
+        @Override
+        public void onClickRetry() {
+          LogUtils.e(TAG, "onClickRetry !");
+        }
+      });
+
+      cAdItem.setCanInterruptVideoPlay(true);
+      cAdItem.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
+        @Override
+        public void onAdClicked(View view, int type) {
+
+        }
+
+        @Override
+        public void onAdShow(View view, int type) {
+
+        }
+
+        @Override
+        public void onRenderFail(View view, String msg, int code) {
+
+        }
+
+        @Override
+        public void onRenderSuccess(View view, float width, float height) {
+          LogUtils.d(TAG, "onRenderSuccess: 穿山甲渲染成功");
+        }
+      });
+      cAdItem.render();
+      View expressAdView = cAdItem.getExpressAdView();
+      container.removeAllViews();
+      if(expressAdView.getParent()!=null){
+        ((ViewGroup)expressAdView.getParent()).removeView(expressAdView);
+      }
+      container.addView(expressAdView);
+    }else {
       TikTokView view = helper.getView(R.id.tiktok_View);
       VideoView mVideoView = helper.getView(R.id.videoView);
       view.setVideoData(item, videoType);
@@ -119,7 +200,9 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
   public void onViewDetachedFromWindow(@NonNull BaseViewHolder holder) {
     super.onViewDetachedFromWindow(holder);
 
-    if (getItemViewType(holder.getLayoutPosition()) == 99) return;
+    if (getItemViewType(holder.getLayoutPosition()) == 99 ||getItemViewType(holder.getLayoutPosition()) == 98) {
+      return;
+    }
 
     TikTokView view = holder.getView(R.id.tiktok_View);
     view.clear();
@@ -152,7 +235,7 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
   @Override
   public void onViewRecycled(@NonNull BaseViewHolder holder) {
 
-    if (getItemViewType(holder.getLayoutPosition()) == 99) return;
+    if (getItemViewType(holder.getLayoutPosition()) == 99 || getItemViewType(holder.getLayoutPosition()) == 98) return;
 
     int position = holder.getLayoutPosition();
     VideoView view = holder.getView(R.id.videoView);

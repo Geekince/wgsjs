@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.wwsl.wgsj.bean.net.VideoMusicBean;
 
@@ -123,6 +124,7 @@ public class VideoBean implements Parcelable, MultiItemEntity {
 
 
     private ZjExpressFeedFullVideoAd adItem;
+    private TTNativeExpressAd cAdItem;
 
 
     @Override
@@ -271,7 +273,7 @@ public class VideoBean implements Parcelable, MultiItemEntity {
 
     }
 
-    //广告isAd=1 助农isZn=1 众简广告isAd=99
+    //广告isAd=1 助农isZn=1 众简广告isAd=99 穿山甲广告98
     @Override
     public int getItemType() {
         try {
@@ -281,6 +283,8 @@ public class VideoBean implements Parcelable, MultiItemEntity {
                 return 2;
             } else if (isAd.equals("99")) {
                 return 99;
+            }if (isAd.equals("98")) {
+                return 98;
             } else {
                 return 3;
             }
@@ -288,4 +292,6 @@ public class VideoBean implements Parcelable, MultiItemEntity {
             return 3;
         }
     }
+
+
 }

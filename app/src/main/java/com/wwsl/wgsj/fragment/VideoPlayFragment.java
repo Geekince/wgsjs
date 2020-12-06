@@ -21,6 +21,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.dueeeke.videoplayer.player.VideoView;
 import com.frame.fire.util.LogUtils;
 import com.permissionx.guolindev.PermissionX;
@@ -38,6 +41,7 @@ import com.wwsl.wgsj.activity.common.WebViewActivity;
 import com.wwsl.wgsj.activity.message.ChatRoomActivity;
 import com.wwsl.wgsj.activity.video.TakeVideoWithSameMusicActivity;
 import com.wwsl.wgsj.activity.video.VideoReportActivity;
+import com.wwsl.wgsj.ad.TTAdManagerHolder;
 import com.wwsl.wgsj.adapter.VideoAdapter;
 import com.wwsl.wgsj.base.BaseFragment;
 import com.wwsl.wgsj.bean.KeyValueBean;
@@ -131,6 +135,7 @@ public class VideoPlayFragment extends BaseFragment
   private String mGenerateVideoPath, mJoinVideoPath;
   private final int onSuccessFile      = 96;
   private final int onGenerateComplete = 98;
+  private TTAdNative mTTAdNative;
 
   private Handler handler = new Handler(msg -> {
     switch (msg.what) {
@@ -243,6 +248,7 @@ public class VideoPlayFragment extends BaseFragment
     findView();
     mPreloadManager = PreloadManager.getInstance(mContext);
     mDownloadUtil = new DownloadUtil();
+    mTTAdNative = TTAdManagerHolder.get().createAdNative(mContext);
     initView();
     initListener();
   }
@@ -715,9 +721,14 @@ public class VideoPlayFragment extends BaseFragment
   }
 
   public void loadMoreAd(int preSize, int newDataSize) {
+
+    //TODO 假设每次都能拿到10条数据
     DisplayMetrics dm = new DisplayMetrics();
     getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-    ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
+
+    int width = dm.widthPixels;
+    int height = CommonUtil.px2dip(mContext, dm.heightPixels) - 10;
+    ZjSize size = new ZjSize(width, height);
     ZjExpressFeedFullVideo expressFeedFullVideo =
         new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
             new ZjExpressFeedFullVideoListener() {
@@ -732,7 +743,7 @@ public class VideoPlayFragment extends BaseFragment
                   bean.setIsPublic("0");
                   bean.setIsAd("99");
                   bean.setAdItem(ads.get(0));
-                  videoAdapter.addData(bean);
+                  videoAdapter.addData(preSize + newDataSize / 2,bean);
                 } else if (ads.size() == 2) {
                   VideoBean bean1 = new VideoBean();
                   bean1.setId(System.currentTimeMillis() + "");
@@ -740,36 +751,14 @@ public class VideoPlayFragment extends BaseFragment
                   bean1.setIsPublic("0");
                   bean1.setIsAd("99");
                   bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(preSize + newDataSize / 2, bean1);
+                  videoAdapter.addData(preSize + 2,bean1);
                   VideoBean bean2 = new VideoBean();
                   bean2.setId(System.currentTimeMillis() + "");
                   bean2.setIsZn("0");
                   bean2.setIsPublic("0");
                   bean2.setIsAd("99");
                   bean2.setAdItem(ads.get(1));
-                  videoAdapter.addData(bean2);
-                } else if (ads.size() == 3) {
-                  int per = newDataSize / 3;
-                  VideoBean bean1 = new VideoBean();
-                  bean1.setId(System.currentTimeMillis() + "");
-                  bean1.setIsZn("0");
-                  bean1.setIsPublic("0");
-                  bean1.setIsAd("99");
-                  bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(preSize + per, bean1);
-                  VideoBean bean2 = new VideoBean();
-                  bean2.setId(System.currentTimeMillis() + "");
-                  bean2.setIsZn("0");
-                  bean2.setIsPublic("0");
-                  bean2.setIsAd("99");
-                  bean2.setAdItem(ads.get(1));
-                  videoAdapter.addData(preSize + per * 2 + 1, bean2);
-                  VideoBean bean3 = new VideoBean();
-                  bean3.setId(System.currentTimeMillis() + "");
-                  bean3.setIsZn("0");
-                  bean3.setIsPublic("0");
-                  bean3.setIsAd("99");
-                  bean3.setAdItem(ads.get(1));
+                  videoAdapter.addData(preSize + newDataSize / 2,bean2);
                 }
               }
 
@@ -778,19 +767,62 @@ public class VideoPlayFragment extends BaseFragment
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
               }
             });
-    expressFeedFullVideo.loadAd(3);
+    expressFeedFullVideo.loadAd(2);
+    //穿山甲
+    AdSlot adSlot = new AdSlot.Builder()
+            .setCodeId("945660747")
+            .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
+            .setAdCount(2) //请求广告数量为1到3条
+            .build();
+    mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
+      @Override
+      public void onError(int i, String s) {
+        LogUtils.e("myth", "穿山甲-->onError: code->"+i+",msg:"+s);
+      }
+
+      @Override
+      public void onNativeExpressAdLoad(List<TTNativeExpressAd> list) {
+        if (list.size() == 1) {
+          VideoBean bean = new VideoBean();
+          bean.setId(System.currentTimeMillis() + "");
+          bean.setIsZn("0");
+          bean.setIsPublic("0");
+          bean.setIsAd("98");
+          bean.setCAdItem(list.get(0));
+          videoAdapter.addData(preSize + newDataSize,bean);
+        } else if (list.size() == 2) {
+          VideoBean bean1 = new VideoBean();
+          bean1.setId(System.currentTimeMillis() + "");
+          bean1.setIsZn("0");
+          bean1.setIsPublic("0");
+          bean1.setIsAd("98");
+          bean1.setCAdItem(list.get(0));
+          videoAdapter.addData(preSize + newDataSize / 2 +2, bean1);
+          VideoBean bean2 = new VideoBean();
+          bean2.setId(System.currentTimeMillis() + "");
+          bean2.setIsZn("0");
+          bean2.setIsPublic("0");
+          bean2.setIsAd("98");
+          bean2.setCAdItem(list.get(1));
+          videoAdapter.addData(preSize + newDataSize,bean2);
+        }
+      }
+    });
+
   }
 
   public void loadAd() {
+    //众简
     int itemSize = videoAdapter.getData().size();
     if (itemSize <= 0) return;
     DisplayMetrics dm = new DisplayMetrics();
     getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-    ZjSize size = new ZjSize(dm.widthPixels, CommonUtil.px2dip(mContext, dm.heightPixels) - 10);
+    int width = dm.widthPixels;
+    int height = CommonUtil.px2dip(mContext, dm.heightPixels) - 10;
+    ZjSize size = new ZjSize(width, height);
     ZjExpressFeedFullVideo expressFeedFullVideo =
         new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
             new ZjExpressFeedFullVideoListener() {
-
               @Override
               public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
@@ -802,7 +834,7 @@ public class VideoPlayFragment extends BaseFragment
                   bean.setIsPublic("0");
                   bean.setIsAd("99");
                   bean.setAdItem(ads.get(0));
-                  videoAdapter.addData(bean);
+                  videoAdapter.addData(itemSize / 2, bean);
                 } else if (ads.size() == 2) {
                   VideoBean bean1 = new VideoBean();
                   bean1.setId(System.currentTimeMillis() + "");
@@ -818,28 +850,6 @@ public class VideoPlayFragment extends BaseFragment
                   bean2.setIsAd("99");
                   bean2.setAdItem(ads.get(1));
                   videoAdapter.addData(bean2);
-                } else if (ads.size() == 3) {
-                  int per = itemSize / 3;
-                  VideoBean bean1 = new VideoBean();
-                  bean1.setId(System.currentTimeMillis() + "");
-                  bean1.setIsZn("0");
-                  bean1.setIsPublic("0");
-                  bean1.setIsAd("99");
-                  bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(per, bean1);
-                  VideoBean bean2 = new VideoBean();
-                  bean2.setId(System.currentTimeMillis() + "");
-                  bean2.setIsZn("0");
-                  bean2.setIsPublic("0");
-                  bean2.setIsAd("99");
-                  bean2.setAdItem(ads.get(1));
-                  videoAdapter.addData(per * 2 + 1, bean2);
-                  VideoBean bean3 = new VideoBean();
-                  bean3.setId(System.currentTimeMillis() + "");
-                  bean3.setIsZn("0");
-                  bean3.setIsPublic("0");
-                  bean3.setIsAd("99");
-                  bean3.setAdItem(ads.get(1));
                 }
               }
 
@@ -848,7 +858,49 @@ public class VideoPlayFragment extends BaseFragment
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.error=" + error.getErrorMsg());
               }
             });
-    expressFeedFullVideo.loadAd(3);
+    expressFeedFullVideo.loadAd(2);
+    //穿山甲
+
+    AdSlot adSlot = new AdSlot.Builder()
+            .setCodeId("945660747")
+            .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
+            .setAdCount(2) //请求广告数量为1到3条
+            .build();
+
+    mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
+      @Override
+      public void onError(int i, String s) {
+        LogUtils.e("myth", "穿山甲-->onError: code->"+i+",msg:"+s);
+      }
+
+      @Override
+      public void onNativeExpressAdLoad(List<TTNativeExpressAd> list) {
+        if (list.size() == 1) {
+          VideoBean bean = new VideoBean();
+          bean.setId(System.currentTimeMillis() + "");
+          bean.setIsZn("0");
+          bean.setIsPublic("0");
+          bean.setIsAd("98");
+          bean.setCAdItem(list.get(0));
+          videoAdapter.addData(bean);
+        } else if (list.size() == 2) {
+          VideoBean bean1 = new VideoBean();
+          bean1.setId(System.currentTimeMillis() + "");
+          bean1.setIsZn("0");
+          bean1.setIsPublic("0");
+          bean1.setIsAd("98");
+          bean1.setCAdItem(list.get(0));
+          videoAdapter.addData(9, bean1);
+          VideoBean bean2 = new VideoBean();
+          bean2.setId(System.currentTimeMillis() + "");
+          bean2.setIsZn("0");
+          bean2.setIsPublic("0");
+          bean2.setIsAd("98");
+          bean2.setCAdItem(list.get(1));
+          videoAdapter.addData(bean2);
+        }
+      }
+    });
   }
 
   private void loadMoreData(boolean showLoadTxt) {

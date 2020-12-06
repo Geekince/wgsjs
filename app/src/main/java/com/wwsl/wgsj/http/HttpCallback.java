@@ -1,13 +1,17 @@
 package com.wwsl.wgsj.http;
 
+import android.app.ActivityManager;
 import android.app.Dialog;
+import android.content.ComponentName;
 
 import com.alibaba.fastjson.JSON;
+import com.frame.fire.util.LogUtils;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
+import com.wwsl.wgsj.AppContext;
 import com.wwsl.wgsj.R;
-import com.wwsl.wgsj.activity.common.ActivityManager;
+import com.wwsl.wgsj.activity.login.LauncherActivity;
 import com.wwsl.wgsj.activity.login.LoginInvalidActivity;
 import com.wwsl.wgsj.utils.L;
 import com.wwsl.wgsj.utils.ToastUtil;
@@ -17,6 +21,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.UnknownServiceException;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by cxf on 2017/8/7.
@@ -40,8 +46,18 @@ public abstract class HttpCallback extends AbsCallback<JsonBean> {
                 if (data != null) {
                     if (700 == data.getCode()) {
                         //token过期，重新登录
-                        if (ActivityManager.getInstance().getActivity(LoginInvalidActivity.class.getSimpleName()) == null) {
-                            LoginInvalidActivity.forward(data.getMsg());
+                        ActivityManager activityManager = (ActivityManager) AppContext.sInstance.getSystemService(ACTIVITY_SERVICE);
+                        //获取当前栈顶的activity
+                        ComponentName currentActivityName = activityManager.getRunningTasks(1).get(0).topActivity;
+
+                        LogUtils.e("myth", "当前栈顶activity: " + currentActivityName.getClassName()+"---------LauncherActivity: "+LauncherActivity.class.getName());
+
+                        if (LauncherActivity.class.getName().equals(currentActivityName.getClassName())) {
+
+                        } else {
+                            if (com.wwsl.wgsj.activity.common.ActivityManager.getInstance().getActivity(LoginInvalidActivity.class.getSimpleName()) == null) {
+                                LoginInvalidActivity.forward(data.getMsg());
+                            }
                         }
                     }
 //                    else if (600 == data.getCode()) {

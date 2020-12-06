@@ -225,7 +225,7 @@ public class Constants {
   public static final String LIVE_TIPS           = "";
 
   public static final int REQUEST_CODE_SCAN = 0x00001001;//扫一扫
-  public static final int REQUEST_CODE_AD   = 0x00001002;//扫一扫
+  public static final int REQUEST_CODE_AD   = 0x00001002;//激励视频
 
   public static final String VIDEO_INPUT_DIALOG   = "VideoInputDialogFragment";
   public static final String VIDEO_COMMENT_DIALOG = "VideoCommentViewHolder";

@@ -176,4 +176,8 @@ public abstract class BaseFragment extends Fragment {
             loadingPopupView.dismiss();
         }
     }
+
+
+
+
 }

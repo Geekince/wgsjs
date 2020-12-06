@@ -120,7 +120,7 @@ public class LauncherActivity extends AppCompatActivity {
   private static final int         AD_TIME_OUT        = 3000;
   private              FrameLayout zjContainer;
   private              TTAdNative  mTTAdNative;
-  private              String      mCodeId            = "887409984";
+  private              String      mCodeId            = "887410327";
   private              boolean     mIsExpress         = false;
   private              TTSplashAd  loadAd;
   //是否强制跳转到主页面
@@ -136,6 +136,7 @@ public class LauncherActivity extends AppCompatActivity {
   private              boolean     isLoadConfigFinish = false;//是否已配置完成
   private              boolean     isNeedVersion      = false;//是否强制更新apk
   private              boolean     isGoShowingAd      = false;//是点击了广告
+  private              boolean     isLoadAdFinish      = false;//是否加载ad成功
 
   private String   phone;
   private String   uid;
@@ -200,10 +201,12 @@ public class LauncherActivity extends AppCompatActivity {
       @MainThread
       public void onSplashAdLoad(TTSplashAd ad) {
         LogUtils.e(TAG, "onSplashAdLoad: 加载中...");
+        isLoadAdFinish = true;
         if (ad == null) {
           return;
         }
         loadAd = ad;
+        handler.sendEmptyMessage(12);
         //获取SplashView
       }
     }, AD_TIME_OUT);
@@ -252,7 +255,6 @@ public class LauncherActivity extends AppCompatActivity {
 
     downloadLayout = findViewById(R.id.updateLayout);
     loadPb = findViewById(R.id.loadPb);
-    initAd();
     loadSpData();
     //1.检查权限
     checkPermission();
@@ -421,6 +423,7 @@ public class LauncherActivity extends AppCompatActivity {
 
     if (lps.size() == 0) {
       isGrand = true;
+      initAd();
       getConfig();
     } else {
       //暂时没有适配android 10 后台定位
@@ -458,6 +461,7 @@ public class LauncherActivity extends AppCompatActivity {
               ToastUtil.show("部分权限未授权,部分功能不能正常使用");
             }
             isGrand = true;
+            initAd();
             getConfig();
           });
     }
@@ -729,7 +733,7 @@ public class LauncherActivity extends AppCompatActivity {
    * 准备完成事件
    */
   public void prepareFinish() {
-    if (isGrand && isLoadConfigFinish) {
+    if (isGrand && isLoadConfigFinish &&isLoadAdFinish) {
       ConfigBean configBean = AppConfig.getInstance().getConfig();
       if (isNeedVersion && "1".equals(configBean.getIsNeedUpdate())) {
         VersionUtil.showDialog(

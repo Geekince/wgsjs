@@ -17,6 +17,7 @@ import com.frame.fire.util.LogUtils;
 import com.wwsl.wgsj.R;
 import com.wwsl.wgsj.activity.common.SearchActivity;
 import com.wwsl.wgsj.activity.live.MainLiveListActivity;
+import com.wwsl.wgsj.activity.main.RewardActivity;
 import com.wwsl.wgsj.adapter.CommPagerAdapter;
 import com.wwsl.wgsj.base.BaseFragment;
 import com.wwsl.wgsj.bean.LiveBean;
@@ -25,6 +26,7 @@ import com.wwsl.wgsj.http.HttpCallback;
 import com.wwsl.wgsj.http.HttpConst;
 import com.wwsl.wgsj.http.HttpUtil;
 import com.wwsl.wgsj.utils.StringUtil;
+import com.wwsl.wgsj.utils.ToastUtil;
 import com.wwsl.wgsj.utils.VideoCutDownTimer;
 import com.wwsl.wgsj.views.OnVideoTickListener;
 import com.wwsl.wgsj.views.TabEntity;
@@ -264,28 +266,32 @@ public class MainHomeFragment extends BaseFragment implements OnVideoTickListene
     public void onFinish() {
         tikTimes--;
 
-
         if ((tikTimes % perMinTick) == 0) {
             cutDownTime--;
-            HttpUtil.videoTaskTick();
+            if (cutDownTime < 4 && cutDownTime >= 1) {
+                RewardActivity.startActivity(getActivity());
+            } else {
+                HttpUtil.videoTaskTick();
+                startNewTick();
+            }
+        }else {
+            startNewTick();
         }
+    }
 
+    private void startNewTick() {
         VideoPlayFragment fragment = fragments.get(viewPager.getCurrentItem());
         if (cutDownTime > 0 && !curTickVideoId.equals(fragment.getCurrentVideoId())) {
-
             curTickVideoId = fragment.getCurrentVideoId();
-
             int temp = tikTimes % perMinTick;
             temp = (temp == 0 ? 4 : temp);
             tempDuration = (perMinTick - temp) * perTime;
-
             tvTimes.setText(String.valueOf(cutDownTime));
             cutDownTimer.start();
         } else if (cutDownTime == 0) {
             taskPb.setVisibility(View.GONE);
             tvTimes.setVisibility(View.GONE);
         }
-
     }
 
     @Subscribe
@@ -326,5 +332,16 @@ public class MainHomeFragment extends BaseFragment implements OnVideoTickListene
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 //        super.onSaveInstanceState(outState);
+    }
+
+    public void adRewardBack(int times) {
+        if (1 == times) {
+            HttpUtil.videoTaskTick();
+        } else {
+            ToastUtil.show("观看时长较短,未完成任务!");
+            cutDownTime++;
+            tikTimes = perMinTick * cutDownTime;
+            tvTimes.setText(String.valueOf(cutDownTime));
+        }
     }
 }

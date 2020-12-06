@@ -756,7 +756,7 @@ public class MainActivity extends AbsActivity {
       if (mainGamesViewHolder != null) {
         int times = data.getIntExtra("times", 0);
         if (times > 0) {
-          mainGamesViewHolder.adRewardBack(times);
+          mainHomeViewHolder.adRewardBack(times);
         }
       }
     }

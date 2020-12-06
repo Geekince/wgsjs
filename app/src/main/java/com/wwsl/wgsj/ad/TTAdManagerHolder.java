@@ -35,8 +35,8 @@ public class TTAdManagerHolder {
 
     private static TTAdConfig buildConfig(Context context) {
         return new TTAdConfig.Builder()
-                .appId("5124946")
-                .appName("围观世界测试")
+                .appId("5125220")
+                .appName("围观视界测试")
                 .useTextureView(true) //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
                 .allowShowNotify(true) //是否允许sdk展示通知栏提示
                 .debug(true) //测试阶段打开，可以通过日志排查问题，上线时去除该调用
