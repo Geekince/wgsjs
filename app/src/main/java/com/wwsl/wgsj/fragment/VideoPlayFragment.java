@@ -770,7 +770,7 @@ public class VideoPlayFragment extends BaseFragment
     expressFeedFullVideo.loadAd(2);
     //穿山甲
     AdSlot adSlot = new AdSlot.Builder()
-            .setCodeId("945660747")
+            .setCodeId("945661536")
             .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
             .setAdCount(2) //请求广告数量为1到3条
             .build();
@@ -862,7 +862,7 @@ public class VideoPlayFragment extends BaseFragment
     //穿山甲
 
     AdSlot adSlot = new AdSlot.Builder()
-            .setCodeId("945660747")
+            .setCodeId("945661536")
             .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
             .setAdCount(2) //请求广告数量为1到3条
             .build();

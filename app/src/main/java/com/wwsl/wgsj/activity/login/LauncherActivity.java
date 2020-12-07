@@ -120,7 +120,7 @@ public class LauncherActivity extends AppCompatActivity {
   private static final int         AD_TIME_OUT        = 3000;
   private              FrameLayout zjContainer;
   private              TTAdNative  mTTAdNative;
-  private              String      mCodeId            = "887410327";
+  private              String      mCodeId            = "887410529";
   private              boolean     mIsExpress         = false;
   private              TTSplashAd  loadAd;
   //是否强制跳转到主页面
