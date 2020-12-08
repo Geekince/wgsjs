@@ -3,113 +3,117 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/black"
+    >
 
 
+  <!--视频广告 可点击跳转-->
+  <!--    <RelativeLayout-->
+  <!--        android:id="@+id/ui_video"-->
+  <!--        android:layout_width="match_parent"-->
+  <!--        android:layout_height="match_parent"-->
+  <!--        android:visibility="gone">-->
 
-    <!--视频广告 可点击跳转-->
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/ui_video"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:visibility="gone">-->
+  <!--        <com.dueeeke.videoplayer.player.VideoView-->
+  <!--            android:id="@+id/videoView"-->
+  <!--            android:layout_width="match_parent"-->
+  <!--            android:layout_height="match_parent" />-->
 
-<!--        <com.dueeeke.videoplayer.player.VideoView-->
-<!--            android:id="@+id/videoView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
+  <!--        <View-->
+  <!--            android:id="@+id/clickView"-->
+  <!--            android:layout_width="match_parent"-->
+  <!--            android:layout_height="match_parent" />-->
+  <!--    </RelativeLayout>-->
 
-<!--        <View-->
-<!--            android:id="@+id/clickView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
-<!--    </RelativeLayout>-->
+  <!--图片广告 可点击跳转-->
+  <RelativeLayout
+      android:id="@+id/ui_img"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      >
 
-    <!--图片广告 可点击跳转-->
-    <RelativeLayout
-        android:id="@+id/ui_img"
+    <ImageView
+        android:id="@+id/ivAdvert"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:scaleType="fitXY"
+        />
 
-        <ImageView
-            android:id="@+id/ivAdvert"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY" />
+    <TextView
+        android:id="@+id/tvAdvertSkip"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_mic_enable"
+        android:gravity="center"
+        android:text="跳过"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        />
 
-        <TextView
-            android:id="@+id/tvAdvertSkip"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/bg_mic_enable"
-            android:gravity="center"
-            android:text="跳过"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
+    <com.wwsl.wgsj.views.CountdownView
+        android:id="@+id/count_down_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:border_color="#656869"
+        app:border_width="2dp"
+        app:text_color="#656869"
+        app:text_size="12sp"
+        />
+  </RelativeLayout>
 
-        <com.wwsl.wgsj.views.CountdownView
-            android:id="@+id/count_down_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            app:border_color="#656869"
-            app:border_width="2dp"
-            app:text_color="#656869"
-            app:text_size="12sp" />
-    </RelativeLayout>
+  <!--apk更新-->
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/updateLayout"
+      android:layout_width="140dp"
+      android:layout_height="140dp"
+      android:layout_centerInParent="true"
+      android:background="@drawable/shape_bg_grey_stroke_radius_10"
+      android:backgroundTint="@color/grey1"
+      android:visibility="gone"
+      >
 
-    <!--apk更新-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/updateLayout"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:background="@drawable/shape_bg_grey_stroke_radius_10"
-        android:backgroundTint="@color/grey1"
-        android:visibility="gone"
+    <io.netopen.hotbitmapgg.library.view.RingProgressBar
+        android:id="@+id/loadPb"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:max="100"
+        app:ringColor="#40000000"
+        app:ringProgressColor="@color/orange_lite"
+        app:ringWidth="5dp"
+        app:style="STROKE"
+        app:textColor="@color/white"
+        app:textIsShow="true"
+        app:textSize="30sp"
+        />
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <io.netopen.hotbitmapgg.library.view.RingProgressBar
-            android:id="@+id/loadPb"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerInParent="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:max="100"
-            app:ringColor="#40000000"
-            app:ringProgressColor="@color/orange_lite"
-            app:ringWidth="5dp"
-            app:style="STROKE"
-            app:textColor="@color/white"
-            app:textIsShow="true"
-            app:textSize="30sp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ImageView
-        android:id="@+id/launch_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#171B24"
-        android:src="@mipmap/launch_bg2"
-        android:visibility="gone" />
+  <TextView
+      android:id="@+id/launch_img"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/transparent"
+      android:visibility="gone"
+      />
 
 
-    <!--众简广告-->
-    <FrameLayout
-        android:id="@+id/rootView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+  <!--众简广告-->
+  <FrameLayout
+      android:id="@+id/rootView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      />
 </RelativeLayout>
 
 

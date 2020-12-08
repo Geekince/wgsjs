@@ -114,7 +114,7 @@ public class LauncherActivity extends AppCompatActivity {
   private ConstraintLayout downloadLayout;
   private RingProgressBar  loadPb;
   //启动图片
-  private ImageView        launch_img;
+  private TextView        launch_img;
 
   //穿山甲广告
   private static final int         AD_TIME_OUT        = 3000;
