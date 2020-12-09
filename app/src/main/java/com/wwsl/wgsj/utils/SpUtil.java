@@ -162,10 +162,10 @@ public class SpUtil {
 
   public void clear() {
     SharedPreferences.Editor editor = mSharedPreferences.edit();
-    editor.clear().apply();
-    if (AppConfig.getInstance().getConfig() != null) {
-      setStringValue(SpUtil.CONFIG, JSON.toJSONString(AppConfig.getInstance().getConfig()));
-    }
+    editor.remove(SpUtil.UID);
+    editor.remove(SpUtil.TOKEN);
+    editor.remove(SpUtil.USER_INFO);
+    editor.apply();
   }
 
   public void removeValue(String... keys) {
