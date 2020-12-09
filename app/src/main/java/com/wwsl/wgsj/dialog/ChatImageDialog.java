@@ -53,7 +53,7 @@ public class ChatImageDialog extends PopupWindow {
         mContext = context;
         mParent = parent;
         ScreenDimenUtil util = ScreenDimenUtil.getInstance();
-        mScreenWidth = util.getScreenWdith();
+        mScreenWidth = util.getScreenWidth();
         mScreenHeight = util.getScreenHeight();
         setContentView(initView());
         setWidth(ViewGroup.LayoutParams.MATCH_PARENT);

@@ -157,7 +157,7 @@ public class LiveEnterRoomAnimPresenter {
 
             }
         });
-        mScreenWidth = ScreenDimenUtil.getInstance().getScreenWdith();
+        mScreenWidth = ScreenDimenUtil.getInstance().getScreenWidth();
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

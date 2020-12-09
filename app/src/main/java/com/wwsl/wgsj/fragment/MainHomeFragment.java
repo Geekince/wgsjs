@@ -269,7 +269,7 @@ public class MainHomeFragment extends BaseFragment implements OnVideoTickListene
         if ((tikTimes % perMinTick) == 0) {
             cutDownTime--;
             if (cutDownTime < 4 && cutDownTime >= 1) {
-                RewardActivity.startActivity(getActivity());
+                RewardActivity.startActivity(mActivity);
             } else {
                 HttpUtil.videoTaskTick();
                 startNewTick();

@@ -91,7 +91,7 @@ public class HtmlFromUtils {
 //                                    h = (int) (scale * h);
 //                                }
 
-                                int screenWidth = ScreenDimenUtil.getInstance().getScreenWdith() - DpUtil.dp2px(20);
+                                int screenWidth = ScreenDimenUtil.getInstance().getScreenWidth() - DpUtil.dp2px(20);
                                 if (w != screenWidth && w > 0) {
                                     float scale = ((screenWidth * 1.0f) / w);
                                     w = (int) (scale * w);

@@ -61,10 +61,11 @@ public class AppContext extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
         sInstance = this;
-
         CrashHandler.getInstance().init(this);
+        //初始化Http
+        HttpUtil.init();
+
         sDeBug = BuildConfig.DEBUG;
 
 
@@ -75,8 +76,7 @@ public class AppContext extends MultiDexApplication {
         ZjSdk.init(this, Constants.AD_APP_ID);
         TTAdManagerHolder.init(this);
 
-        //初始化Http
-        HttpUtil.init();
+
         //全局配置视频解码器
         LogUtils.e(TAG, "init---->配置视频解码器");
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()

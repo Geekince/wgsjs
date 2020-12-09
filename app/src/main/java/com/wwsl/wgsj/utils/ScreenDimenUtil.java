@@ -57,7 +57,7 @@ public class ScreenDimenUtil {
      *
      * @return
      */
-    public int getScreenWdith() {
+    public int getScreenWidth() {
         return mScreenWdith;
     }
 

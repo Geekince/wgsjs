@@ -5,27 +5,22 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -40,14 +35,7 @@ import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTSplashAd;
-import com.dueeeke.videoplayer.controller.BaseVideoController;
-import com.dueeeke.videoplayer.controller.ControlWrapper;
-import com.dueeeke.videoplayer.controller.IControlComponent;
-import com.dueeeke.videoplayer.exo.ExoMediaPlayerFactory;
-import com.dueeeke.videoplayer.player.VideoView;
 import com.frame.fire.util.LogUtils;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.permissionx.guolindev.PermissionX;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -59,7 +47,6 @@ import com.wwsl.wgsj.activity.MainActivity;
 import com.wwsl.wgsj.activity.common.WebViewActivity;
 import com.wwsl.wgsj.ad.TTAdManagerHolder;
 import com.wwsl.wgsj.bean.ConfigBean;
-import com.wwsl.wgsj.bean.LaunchAdBean;
 import com.wwsl.wgsj.bean.PartnerCityBean;
 import com.wwsl.wgsj.bean.UserBean;
 import com.wwsl.wgsj.custom.AdvertSkipView;
@@ -74,16 +61,11 @@ import com.wwsl.wgsj.utils.DownloadUtil;
 import com.wwsl.wgsj.utils.LocationUtil;
 import com.wwsl.wgsj.utils.ScreenDimenUtil;
 import com.wwsl.wgsj.utils.SpUtil;
-import com.wwsl.wgsj.utils.StringUtil;
 import com.wwsl.wgsj.utils.SystemUtil;
 import com.wwsl.wgsj.utils.ToastUtil;
 import com.wwsl.wgsj.utils.VersionUtil;
 import com.wwsl.wgsj.views.CountdownView;
 
-import com.wwsl.wgsj.views.dialog.wheelpick.DatePickerUtil;
-import com.zj.zjsdk.ad.ZjAdError;
-import com.zj.zjsdk.ad.ZjSplashAd;
-import com.zj.zjsdk.ad.ZjSplashAdListener;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -161,7 +143,7 @@ public class LauncherActivity extends AppCompatActivity {
   private void initAd() {
     //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
     int screenHeight = ScreenDimenUtil.getInstance().getScreenHeight();
-    int screenWidth = ScreenDimenUtil.getInstance().getScreenWdith();
+    int screenWidth = ScreenDimenUtil.getInstance().getScreenWidth();
     AdSlot adSlot = null;
     if (mIsExpress) {
       //个性化模板广告需要传入期望广告view的宽、高，单位dp，请传入实际需要的大小，

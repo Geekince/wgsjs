@@ -37,7 +37,6 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
   private              TikTokRenderViewFactory    tikTokRenderViewFactory;
   private              int                        videoType;
   private              Context                    mContext;
-  private              Activity                   mActivity;
 
   public VideoAdapter(@Nullable List<VideoBean> data, Context context, int videoType) {
     super(data);
@@ -56,9 +55,6 @@ public class VideoAdapter extends BaseMultiItemQuickAdapter<VideoBean, BaseViewH
     return getData().get(position).getItemType();
   }
 
-  public void setmActivity(Activity mActivity) {
-    this.mActivity = mActivity;
-  }
 
   public void setLayoutClickListener(OnVideoLayoutClickListener listener) {
     this.listener = listener;

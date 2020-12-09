@@ -69,7 +69,7 @@ public class LiveLinkMicPkViewHolder extends AbsViewHolder {
         RelativeLayout layoutPk = (RelativeLayout) findViewById(R.id.layoutPk);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layoutPk.getLayoutParams();
         params.height = AppConfig.getVidowHeight();
-        mHalfScreenWidth = ScreenDimenUtil.getInstance().getScreenWdith() / 2;
+        mHalfScreenWidth = ScreenDimenUtil.getInstance().getScreenWidth() / 2;
         mLeftString = WordUtil.getString(R.string.live_link_mic_pk_1);
         mRightString = WordUtil.getString(R.string.live_link_mic_pk_2);
         mFrameImageView = (FrameImageView) findViewById(R.id.frame_img);

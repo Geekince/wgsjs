@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -25,6 +26,7 @@ import com.luck.picture.lib.tools.SdkVersionUtils;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.impl.LoadingPopupView;
 import com.wwsl.wgsj.R;
+import com.wwsl.wgsj.activity.MainActivity;
 import com.wwsl.wgsj.utils.CommonUtil;
 import com.wwsl.wgsj.utils.GlideEngine;
 
@@ -41,6 +43,7 @@ import butterknife.ButterKnife;
 
 
 public abstract class BaseFragment extends Fragment {
+    public Activity mActivity;
     protected LoadingPopupView loadingPopupView;
     protected View rootView;
     protected Context mContext;
@@ -177,7 +180,8 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-
-
-
+    @Override public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
 }

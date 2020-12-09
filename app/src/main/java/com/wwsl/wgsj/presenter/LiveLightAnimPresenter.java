@@ -37,7 +37,7 @@ public class LiveLightAnimPresenter {
         mContext = context;
         mContainer = container;
         ScreenDimenUtil screenDimenUtil = ScreenDimenUtil.getInstance();
-        mStartX = screenDimenUtil.getScreenWdith() * 4 / 5;
+        mStartX = screenDimenUtil.getScreenWidth() * 4 / 5;
         mStartY = screenDimenUtil.getScreenHeight() - DpUtil.dp2px(50);
         mPathMeasures = new PathMeasure[6];
         int dp50 = DpUtil.dp2px(50);

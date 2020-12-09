@@ -35,7 +35,7 @@ public abstract class AbsLivePageViewHolder extends AbsViewHolder implements Vie
 
     @Override
     public void init() {
-        int screenWidth = ScreenDimenUtil.getInstance().getScreenWdith();
+        int screenWidth = ScreenDimenUtil.getInstance().getScreenWidth();
         Interpolator interpolator = new AccelerateDecelerateInterpolator();
         mEnterAnimator = ObjectAnimator.ofFloat(mContentView, "translationX", screenWidth, 0);
         mEnterAnimator.setDuration(200);

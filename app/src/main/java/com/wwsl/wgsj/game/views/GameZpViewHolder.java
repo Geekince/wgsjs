@@ -76,7 +76,7 @@ public class GameZpViewHolder extends AbsGameViewHolder {
     public GameZpViewHolder(GameParam param, GameSoundPool gameSoundPool) {
         super(param, gameSoundPool);
         boolean anchor = param.isAnchor();
-        int h = ScreenDimenUtil.getInstance().getScreenWdith() / 2 + DpUtil.dp2px(20);
+        int h = ScreenDimenUtil.getInstance().getScreenWidth() / 2 + DpUtil.dp2px(20);
         mGameViewHeight = anchor ? h : h + DpUtil.dp2px(40);
         if (!anchor) {
             ViewStub viewStub = (ViewStub) findViewById(R.id.view_stub);

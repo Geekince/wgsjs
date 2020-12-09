@@ -70,6 +70,7 @@ import com.wwsl.wgsj.utils.CommonUtil;
 import com.wwsl.wgsj.utils.DownloadUtil;
 import com.wwsl.wgsj.utils.FileUriHelper;
 import com.wwsl.wgsj.utils.FileUtil;
+import com.wwsl.wgsj.utils.ScreenDimenUtil;
 import com.wwsl.wgsj.utils.SnackBarUtil;
 import com.wwsl.wgsj.utils.ToastUtil;
 import com.wwsl.wgsj.utils.VideoEditUtil;
@@ -445,7 +446,6 @@ public class VideoPlayFragment extends BaseFragment
 
     layoutManager = new ViewPagerLayoutManager(getContext(), OrientationHelper.VERTICAL);
     videoAdapter = new VideoAdapter(mVideoList, getContext(), type);
-    videoAdapter.setmActivity(getActivity());
     videoAdapter.setLayoutClickListener(onVideoLayoutClickListener);
     videoRecycler.setLayoutManager(layoutManager);
     videoRecycler.setAdapter(videoAdapter);
@@ -723,11 +723,9 @@ public class VideoPlayFragment extends BaseFragment
   public void loadMoreAd(int preSize, int newDataSize) {
 
     //TODO 假设每次都能拿到10条数据
-    DisplayMetrics dm = new DisplayMetrics();
-    getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-    int width = dm.widthPixels;
-    int height = CommonUtil.px2dip(mContext, dm.heightPixels) - 10;
+    int width = ScreenDimenUtil.getInstance().getScreenWidth();
+    int height = ScreenDimenUtil.getInstance().getScreenHeight() - 10;
     ZjSize size = new ZjSize(width, height);
     ZjExpressFeedFullVideo expressFeedFullVideo =
         new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
@@ -771,7 +769,7 @@ public class VideoPlayFragment extends BaseFragment
     //穿山甲
     AdSlot adSlot = new AdSlot.Builder()
             .setCodeId("945661536")
-            .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
+            .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
             .setAdCount(2) //请求广告数量为1到3条
             .build();
     mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
@@ -815,10 +813,8 @@ public class VideoPlayFragment extends BaseFragment
     //众简
     int itemSize = videoAdapter.getData().size();
     if (itemSize <= 0) return;
-    DisplayMetrics dm = new DisplayMetrics();
-    getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-    int width = dm.widthPixels;
-    int height = CommonUtil.px2dip(mContext, dm.heightPixels) - 10;
+    int width = ScreenDimenUtil.getInstance().getScreenWidth();
+    int height = ScreenDimenUtil.getInstance().getScreenHeight() - 10;
     ZjSize size = new ZjSize(width, height);
     ZjExpressFeedFullVideo expressFeedFullVideo =
         new ZjExpressFeedFullVideo(getActivity(), Constants.AD_VIDEO_LIST_ID, size,
@@ -863,7 +859,7 @@ public class VideoPlayFragment extends BaseFragment
 
     AdSlot adSlot = new AdSlot.Builder()
             .setCodeId("945661536")
-            .setExpressViewAcceptedSize(width, dm.heightPixels) //期望模板广告view的size,单位dp
+            .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
             .setAdCount(2) //请求广告数量为1到3条
             .build();
 
