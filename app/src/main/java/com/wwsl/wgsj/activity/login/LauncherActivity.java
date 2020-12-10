@@ -169,14 +169,16 @@ public class LauncherActivity extends AppCompatActivity {
       @MainThread
       public void onError(int code, String message) {
         LogUtils.e(TAG, "onError" + "code->" + code + ",message->" + message);
-        goNext("");
+        isLoadAdFinish = true;
+        handler.sendEmptyMessage(12);
       }
 
       @Override
       @MainThread
       public void onTimeout() {
         LogUtils.e(TAG, "onTimeout");
-        goNext("");
+        isLoadAdFinish = true;
+        handler.sendEmptyMessage(12);
       }
 
       @Override
