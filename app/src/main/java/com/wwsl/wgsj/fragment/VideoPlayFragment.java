@@ -134,9 +134,9 @@ public class VideoPlayFragment extends BaseFragment
   private ShareDialog shareDialog;
 
   private String mGenerateVideoPath, mJoinVideoPath;
-  private final int onSuccessFile      = 96;
-  private final int onGenerateComplete = 98;
-  private TTAdNative mTTAdNative;
+  private final int        onSuccessFile      = 96;
+  private final int        onGenerateComplete = 98;
+  private       TTAdNative mTTAdNative;
 
   private Handler handler = new Handler(msg -> {
     switch (msg.what) {
@@ -710,7 +710,9 @@ public class VideoPlayFragment extends BaseFragment
         mPreloadManager.addPreloadTask(videoBeans.get(i).getVideoUrl(), (videoStartIndex + j++));
       }
       videoAdapter.addData(videoBeans);
-      loadAd();
+      if (type == HttpConst.VIDEO_TYPE_HOT) {
+        loadAd();
+      }
       if (videoAdapter.getData().size() > 0) {
         videoRecycler.scrollToPosition(0);
       }
@@ -721,9 +723,6 @@ public class VideoPlayFragment extends BaseFragment
   }
 
   public void loadMoreAd(int preSize, int newDataSize) {
-
-    //TODO 假设每次都能拿到10条数据
-
     int width = ScreenDimenUtil.getInstance().getScreenWidth();
     int height = ScreenDimenUtil.getInstance().getScreenHeight() - 10;
     ZjSize size = new ZjSize(width, height);
@@ -734,30 +733,44 @@ public class VideoPlayFragment extends BaseFragment
               @Override
               public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
-                if (ads.size() == 1) {
-                  VideoBean bean = new VideoBean();
-                  bean.setId(System.currentTimeMillis() + "");
-                  bean.setIsZn("0");
-                  bean.setIsPublic("0");
-                  bean.setIsAd("99");
-                  bean.setAdItem(ads.get(0));
-                  videoAdapter.addData(preSize + newDataSize / 2,bean);
-                } else if (ads.size() == 2) {
-                  VideoBean bean1 = new VideoBean();
-                  bean1.setId(System.currentTimeMillis() + "");
-                  bean1.setIsZn("0");
-                  bean1.setIsPublic("0");
-                  bean1.setIsAd("99");
-                  bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(preSize + 2,bean1);
-                  VideoBean bean2 = new VideoBean();
-                  bean2.setId(System.currentTimeMillis() + "");
-                  bean2.setIsZn("0");
-                  bean2.setIsPublic("0");
-                  bean2.setIsAd("99");
-                  bean2.setAdItem(ads.get(1));
-                  videoAdapter.addData(preSize + newDataSize / 2,bean2);
+                if (newDataSize != 10 && newDataSize > 2) {
+                  if (ads.size() >= 1) {
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ads.get(0));
+                    videoAdapter.addData(preSize + 1, bean);
+                  }
+                } else {
+                  if (ads.size() == 1) {
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ads.get(0));
+                    videoAdapter.addData(preSize + 4, bean);
+                  } else if (ads.size() == 2) {
+                    VideoBean bean1 = new VideoBean();
+                    bean1.setId(System.currentTimeMillis() + "");
+                    bean1.setIsZn("0");
+                    bean1.setIsPublic("0");
+                    bean1.setIsAd("99");
+                    bean1.setAdItem(ads.get(0));
+                    videoAdapter.addData(preSize + 2, bean1);
+                    VideoBean bean2 = new VideoBean();
+                    bean2.setId(System.currentTimeMillis() + "");
+                    bean2.setIsZn("0");
+                    bean2.setIsPublic("0");
+                    bean2.setIsAd("99");
+                    bean2.setAdItem(ads.get(1));
+                    videoAdapter.addData(preSize + 4, bean2);
+                  }
                 }
+                //穿山甲
+                loadMoreAd2(preSize, newDataSize, width, height);
               }
 
               @Override
@@ -766,20 +779,36 @@ public class VideoPlayFragment extends BaseFragment
               }
             });
     expressFeedFullVideo.loadAd(2);
-    //穿山甲
+  }
+
+  private void loadMoreAd2(int preSize, int newDataSize, int width, int height) {
     AdSlot adSlot = new AdSlot.Builder()
-            .setCodeId("945661536")
-            .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
-            .setAdCount(2) //请求广告数量为1到3条
-            .build();
+        .setCodeId("945661536")
+        .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
+        .setAdCount(2) //请求广告数量为1到3条
+        .build();
     mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
       @Override
       public void onError(int i, String s) {
-        LogUtils.e("myth", "穿山甲-->onError: code->"+i+",msg:"+s);
+        LogUtils.e("myth", "穿山甲-->onError: code->" + i + ",msg:" + s);
       }
 
       @Override
       public void onNativeExpressAdLoad(List<TTNativeExpressAd> list) {
+
+        if (newDataSize != 10 && newDataSize > 2) {
+          if (list.size() >= 1) {
+            VideoBean bean = new VideoBean();
+            bean.setId(System.currentTimeMillis() + "");
+            bean.setIsZn("0");
+            bean.setIsPublic("0");
+            bean.setIsAd("98");
+            bean.setCAdItem(list.get(0));
+            videoAdapter.addData(bean);
+          }
+          return;
+        }
+
         if (list.size() == 1) {
           VideoBean bean = new VideoBean();
           bean.setId(System.currentTimeMillis() + "");
@@ -787,7 +816,7 @@ public class VideoPlayFragment extends BaseFragment
           bean.setIsPublic("0");
           bean.setIsAd("98");
           bean.setCAdItem(list.get(0));
-          videoAdapter.addData(preSize + newDataSize,bean);
+          videoAdapter.addData(preSize, bean);
         } else if (list.size() == 2) {
           VideoBean bean1 = new VideoBean();
           bean1.setId(System.currentTimeMillis() + "");
@@ -795,18 +824,17 @@ public class VideoPlayFragment extends BaseFragment
           bean1.setIsPublic("0");
           bean1.setIsAd("98");
           bean1.setCAdItem(list.get(0));
-          videoAdapter.addData(preSize + newDataSize / 2 +2, bean1);
+          videoAdapter.addData(preSize + 7, bean1);
           VideoBean bean2 = new VideoBean();
           bean2.setId(System.currentTimeMillis() + "");
           bean2.setIsZn("0");
           bean2.setIsPublic("0");
           bean2.setIsAd("98");
           bean2.setCAdItem(list.get(1));
-          videoAdapter.addData(preSize + newDataSize,bean2);
+          videoAdapter.addData(preSize + 9, bean2);
         }
       }
     });
-
   }
 
   public void loadAd() {
@@ -823,30 +851,43 @@ public class VideoPlayFragment extends BaseFragment
               public void onZjFeedFullVideoLoad(List<ZjExpressFeedFullVideoAd> ads) {
                 LogUtils.e("myth", "onZjFeedFullVideoLoad.ads.size=" + ads.size());
                 int itemSize = videoAdapter.getData().size();
-                if (ads.size() == 1) {
-                  VideoBean bean = new VideoBean();
-                  bean.setId(System.currentTimeMillis() + "");
-                  bean.setIsZn("0");
-                  bean.setIsPublic("0");
-                  bean.setIsAd("99");
-                  bean.setAdItem(ads.get(0));
-                  videoAdapter.addData(itemSize / 2, bean);
-                } else if (ads.size() == 2) {
-                  VideoBean bean1 = new VideoBean();
-                  bean1.setId(System.currentTimeMillis() + "");
-                  bean1.setIsZn("0");
-                  bean1.setIsPublic("0");
-                  bean1.setIsAd("99");
-                  bean1.setAdItem(ads.get(0));
-                  videoAdapter.addData(itemSize / 2, bean1);
-                  VideoBean bean2 = new VideoBean();
-                  bean2.setId(System.currentTimeMillis() + "");
-                  bean2.setIsZn("0");
-                  bean2.setIsPublic("0");
-                  bean2.setIsAd("99");
-                  bean2.setAdItem(ads.get(1));
-                  videoAdapter.addData(bean2);
+                if (itemSize != 10) {
+                  if (ads.size() > 0) {
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ads.get(0));
+                    videoAdapter.addData(bean);
+                  }
+                } else {
+                  if (ads.size() == 1) {
+                    VideoBean bean = new VideoBean();
+                    bean.setId(System.currentTimeMillis() + "");
+                    bean.setIsZn("0");
+                    bean.setIsPublic("0");
+                    bean.setIsAd("99");
+                    bean.setAdItem(ads.get(0));
+                    videoAdapter.addData(5, bean);
+                  } else if (ads.size() == 2) {
+                    VideoBean bean1 = new VideoBean();
+                    bean1.setId(System.currentTimeMillis() + "");
+                    bean1.setIsZn("0");
+                    bean1.setIsPublic("0");
+                    bean1.setIsAd("99");
+                    bean1.setAdItem(ads.get(0));
+                    videoAdapter.addData(2, bean1);
+                    VideoBean bean2 = new VideoBean();
+                    bean2.setId(System.currentTimeMillis() + "");
+                    bean2.setIsZn("0");
+                    bean2.setIsPublic("0");
+                    bean2.setIsAd("99");
+                    bean2.setAdItem(ads.get(1));
+                    videoAdapter.addData(6, bean2);
+                  }
                 }
+                loadAd2(width, height);
               }
 
               @Override
@@ -857,20 +898,27 @@ public class VideoPlayFragment extends BaseFragment
     expressFeedFullVideo.loadAd(2);
     //穿山甲
 
+  }
+
+  private void loadAd2(int width, int height) {
     AdSlot adSlot = new AdSlot.Builder()
-            .setCodeId("945661536")
-            .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
-            .setAdCount(2) //请求广告数量为1到3条
-            .build();
+        .setCodeId("945661536")
+        .setExpressViewAcceptedSize(width, height) //期望模板广告view的size,单位dp
+        .setAdCount(2) //请求广告数量为1到3条
+        .build();
 
     mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
       @Override
       public void onError(int i, String s) {
-        LogUtils.e("myth", "穿山甲-->onError: code->"+i+",msg:"+s);
+        LogUtils.e("myth", "穿山甲-->onError: code->" + i + ",msg:" + s);
       }
 
       @Override
       public void onNativeExpressAdLoad(List<TTNativeExpressAd> list) {
+        if (videoAdapter.getData().size() < 10) {
+          return;
+        }
+
         if (list.size() == 1) {
           VideoBean bean = new VideoBean();
           bean.setId(System.currentTimeMillis() + "");
@@ -886,7 +934,7 @@ public class VideoPlayFragment extends BaseFragment
           bean1.setIsPublic("0");
           bean1.setIsAd("98");
           bean1.setCAdItem(list.get(0));
-          videoAdapter.addData(9, bean1);
+          videoAdapter.addData(videoAdapter.getData().size() * 3 / 4, bean1);
           VideoBean bean2 = new VideoBean();
           bean2.setId(System.currentTimeMillis() + "");
           bean2.setIsZn("0");
@@ -970,7 +1018,9 @@ public class VideoPlayFragment extends BaseFragment
         mPreloadManager.addPreloadTask(newBeans.get(i).getVideoUrl(), (videoStartIndex + j++));
       }
       //加个众简广告
-      loadMoreAd(videoAdapter.getData().size(), newBeans.size());
+      if (type == HttpConst.VIDEO_TYPE_HOT) {
+        loadMoreAd(videoAdapter.getData().size(), newBeans.size());
+      }
       videoAdapter.addData(newBeans);
       swipeRefreshLayout.finishLoadMore();
     } else {

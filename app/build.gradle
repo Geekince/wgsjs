@@ -33,7 +33,7 @@ android {
 
         flavorDimensions "default"
         ndk {
-            abiFilters "armeabi", "armeabi-v8a", "armeabi-v7a"
+            abiFilters "armeabi-v7a"
         }
 
         javaCompileOptions {
