@@ -43,6 +43,10 @@
   <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
   <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
   <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+  <!--穿山甲-->
+  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+  <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+  <uses-permission android:name="android.permission.REAL_GET_TASKSS"/>
 
   <application
       android:name=".AppContext"

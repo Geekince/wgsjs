@@ -73,16 +73,6 @@ public class HttpClient {
     }
 
     public GetRequest<JsonBean> get(String serviceName, String tag) {
-
-        String proxyHost = System.getProperty("http.proxyHost");
-        String proxyPort = System.getProperty("http.proxyPort");
-
-        if (!StringUtil.isEmpty(proxyHost) || !StringUtil.isEmpty(proxyPort)) {
-            LogUtils.e(TAG, "使用代理访问,返回null");
-            ToastUtil.show("禁止使用代理访问");
-            return null;
-        }
-
         return OkGo.<JsonBean>get(mUrl + serviceName)
                 .headers("Connection", "keep-alive")
                 .headers(AppConfig.getInstance().getHttpHeaders())
@@ -93,15 +83,6 @@ public class HttpClient {
 
 
     public PostRequest<JsonBean> post(String serviceName, String tag) {
-
-        String proxyHost = System.getProperty("http.proxyHost");
-        String proxyPort = System.getProperty("http.proxyPort");
-
-        if (!StringUtil.isEmpty(proxyHost) || !StringUtil.isEmpty(proxyPort)) {
-            ToastUtil.show("禁止使用代理访问");
-            return null;
-        }
-
         return OkGo.<JsonBean>post(mUrl + serviceName)
                 .headers("Connection", "keep-alive")
                 .headers(AppConfig.getInstance().getHttpHeaders())
