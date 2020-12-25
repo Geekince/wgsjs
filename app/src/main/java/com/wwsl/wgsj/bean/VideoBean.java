@@ -2,13 +2,11 @@ package com.wwsl.wgsj.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
+import androidx.annotation.Nullable;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.wwsl.wgsj.bean.net.VideoMusicBean;
-
-import androidx.annotation.Nullable;
 import com.zj.zjsdk.ad.express.ZjExpressFeedFullVideoAd;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

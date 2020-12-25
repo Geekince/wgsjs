@@ -4,13 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
-
-import com.bytedance.sdk.openadsdk.TTAdConfig;
-import com.bytedance.sdk.openadsdk.TTAdConstant;
-import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.dueeeke.videoplayer.ijk.IjkPlayerFactory;
 import com.dueeeke.videoplayer.player.VideoViewConfig;
 import com.dueeeke.videoplayer.player.VideoViewManager;
@@ -35,7 +30,6 @@ import com.wwsl.wgsj.share.UMengShareExecutor;
 import com.wwsl.wgsj.share.UMengUtil;
 import com.wwsl.wgsj.utils.CrashHandler;
 import com.wwsl.wgsj.utils.L;
-import com.wwsl.wgsj.utils.SecurityUtil;
 import com.wwsl.wgsj.wxapi.ThirdConfig;
 import com.zj.zjsdk.ZjSdk;
 
@@ -101,7 +95,7 @@ public class AppContext extends MultiDexApplication {
         starter.addTask(new Task() {
             @Override
             public void run() {
-                SecurityUtil.xPosedCheck();
+                //SecurityUtil.xPosedCheck();
 
                 //X5 初始化
                 initX5();
